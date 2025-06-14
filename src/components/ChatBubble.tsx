@@ -35,18 +35,18 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 animate-fade-in`}>
       <div className={`max-w-[80%] ${isUser ? 'order-1' : 'order-2'}`}>
         <div
-          className={`px-4 py-3 rounded-2xl relative transition-all duration-300 hover:scale-[1.02] ${
+          className={`px-4 py-3 rounded-2xl relative transition-all duration-300 hover:scale-[1.02] hover:shadow-lg ${
             isUser
-              ? 'glass border border-cosmic-cyan/30 text-white ml-auto glow-cyan'
-              : 'glass-dark border border-cosmic-purple/30 text-white glow-purple'
+              ? 'glass border border-blue-500/30 text-white ml-auto hover:border-blue-500/50'
+              : 'glass-dark border border-purple-500/30 text-white hover:border-purple-500/50'
           }`}
         >
           {isTyping ? (
             <div className="flex items-center space-x-1">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-cosmic-cyan rounded-full animate-typing" />
-                <div className="w-2 h-2 bg-cosmic-purple rounded-full animate-typing animation-delay-150" />
-                <div className="w-2 h-2 bg-cosmic-pink rounded-full animate-typing animation-delay-300" />
+                <div className="w-2 h-2 bg-blue-400 rounded-full animate-typing" />
+                <div className="w-2 h-2 bg-purple-400 rounded-full animate-typing animation-delay-150" />
+                <div className="w-2 h-2 bg-pink-400 rounded-full animate-typing animation-delay-300" />
               </div>
               <span className="text-sm text-gray-300 ml-2">Nova is thinking...</span>
             </div>
@@ -54,7 +54,7 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
             <div>
               <div 
                 className={`text-sm leading-relaxed ${
-                  isUser ? 'text-white' : 'cosmic-text font-medium'
+                  isUser ? 'text-white' : 'text-white'
                 }`}
                 dangerouslySetInnerHTML={{ __html: renderMarkdown(message) }}
               />
@@ -66,11 +66,11 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
             </div>
           )}
           
-          {/* Glowing edge effect */}
-          <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
+          {/* Subtle glow effect on hover */}
+          <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 opacity-0 hover:opacity-30 ${
             isUser 
-              ? 'bg-gradient-to-r from-cosmic-cyan/20 to-transparent opacity-0 hover:opacity-100'
-              : 'bg-gradient-to-r from-cosmic-purple/20 to-transparent opacity-0 hover:opacity-100'
+              ? 'bg-gradient-to-r from-blue-500/10 to-transparent'
+              : 'bg-gradient-to-r from-purple-500/10 to-transparent'
           }`} />
         </div>
       </div>
