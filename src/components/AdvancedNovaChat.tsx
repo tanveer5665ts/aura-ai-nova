@@ -201,44 +201,44 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto p-2 md:p-4 relative">
       
-      {/* Enhanced Floating Background Elements */}
+      {/* Enhanced Floating Background Elements with new theme */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Floating orbs */}
-        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-cosmic-cyan/10 rounded-full blur-3xl animate-float opacity-60" />
-        <div className="absolute top-3/4 right-1/4 w-40 h-40 bg-cosmic-purple/10 rounded-full blur-3xl animate-float opacity-40" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-1/2 left-3/4 w-24 h-24 bg-cosmic-pink/10 rounded-full blur-3xl animate-float opacity-50" style={{ animationDelay: '4s' }} />
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-modern-indigo/10 rounded-full blur-3xl animate-float opacity-60" />
+        <div className="absolute top-3/4 right-1/4 w-40 h-40 bg-modern-purple/10 rounded-full blur-3xl animate-float opacity-40" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-3/4 w-24 h-24 bg-modern-pink/10 rounded-full blur-3xl animate-float opacity-50" style={{ animationDelay: '4s' }} />
         
         {/* Gradient streams */}
-        <div className="absolute inset-0 bg-gradient-to-br from-cosmic-cyan/5 via-transparent to-cosmic-purple/5 animate-gradient-shift" />
+        <div className="absolute inset-0 bg-gradient-to-br from-modern-indigo/5 via-transparent to-modern-purple/5 animate-gradient-shift" />
       </div>
 
-      {/* Enhanced AI Status Panel */}
+      {/* Enhanced AI Status Panel with new theme */}
       <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20">
-        <div className="glass-dark rounded-xl p-3 md:p-4 border border-cosmic-cyan/30 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-cosmic-cyan/50 hover:shadow-cosmic-cyan/20">
-          <div className="text-xs text-cosmic-cyan font-mono mb-2 tracking-wider">NOVA STATUS</div>
+        <div className="glass-dark rounded-xl p-3 md:p-4 border border-modern-indigo/30 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-modern-indigo/50 hover:shadow-modern-indigo/20">
+          <div className="text-xs text-modern-indigo font-mono mb-2 tracking-wider">NOVA STATUS</div>
           <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="text-gray-400 transition-colors duration-200">
-              Msgs: <span className="text-green-400 font-semibold">{aiStats.messagesProcessed}</span>
+              Msgs: <span className="text-emerald-400 font-semibold">{aiStats.messagesProcessed}</span>
             </div>
             <div className="text-gray-400 transition-colors duration-200">
-              AI: <span className="text-pink-400 font-semibold animate-pulse">LIVE</span>
+              AI: <span className="text-modern-pink font-semibold animate-pulse">LIVE</span>
             </div>
             <div className="text-gray-400 md:block hidden transition-colors duration-200">
-              Time: <span className="text-blue-400 font-semibold">{Math.round(aiStats.averageResponseTime)}ms</span>
+              Time: <span className="text-modern-indigo font-semibold">{Math.round(aiStats.averageResponseTime)}ms</span>
             </div>
             <div className="text-gray-400 md:block hidden transition-colors duration-200">
-              KB: <span className="text-purple-400 font-semibold">{aiStats.knowledgeAccessed}</span>
+              KB: <span className="text-modern-purple font-semibold">{aiStats.knowledgeAccessed}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Mobile-Responsive Header */}
+      {/* Enhanced Mobile-Responsive Header with new theme */}
       <div className="flex-shrink-0 relative mt-12 md:mt-16 z-10">
         {/* Mobile Collapse Toggle with better animation */}
         <button 
           onClick={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
-          className="md:hidden absolute top-0 right-0 z-20 p-3 text-cosmic-cyan hover:text-cosmic-purple transition-all duration-300 transform hover:scale-110 active:scale-95"
+          className="md:hidden absolute top-0 right-0 z-20 p-3 text-modern-indigo hover:text-modern-purple transition-all duration-300 transform hover:scale-110 active:scale-95"
         >
           {isHeaderCollapsed ? (
             <ChevronDown size={20} className="animate-bounce" />
@@ -252,7 +252,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         }`}>
           {/* Enhanced Collapsed Mobile Header */}
           {isHeaderCollapsed ? (
-            <div className="flex items-center justify-center space-x-4 p-2 rounded-2xl glass backdrop-blur-xl border border-cosmic-cyan/20">
+            <div className="flex items-center justify-center space-x-4 p-2 rounded-2xl glass backdrop-blur-xl border border-modern-indigo/20">
               <div className="scale-50 transition-transform duration-300">
                 <HolographicAvatar 
                   isListening={isListening} 
@@ -262,7 +262,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
               </div>
               <div className="transition-all duration-300">
                 <h1 className="text-lg font-bold cosmic-text">Nova AI</h1>
-                <div className="text-xs text-cosmic-cyan font-mono tracking-wider">
+                <div className="text-xs text-modern-indigo font-mono tracking-wider">
                   {currentMood.toUpperCase()}
                 </div>
               </div>
@@ -285,7 +285,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
                 <p className="text-gray-400 text-sm md:text-base transition-colors duration-300">
                   Powered by Tanveer AI
                 </p>
-                <div className="text-xs text-cosmic-cyan font-mono tracking-wider bg-cosmic-cyan/10 px-3 py-1 rounded-full inline-block transition-all duration-300 hover:bg-cosmic-cyan/20">
+                <div className="text-xs text-modern-indigo font-mono tracking-wider bg-modern-indigo/10 px-3 py-1 rounded-full inline-block transition-all duration-300 hover:bg-modern-indigo/20">
                   Mode: {currentMood.toUpperCase()} | Status: ONLINE
                 </div>
               </div>
@@ -341,9 +341,9 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         </div>
       </ScrollArea>
 
-      {/* Enhanced Fixed Input Area */}
+      {/* Enhanced Fixed Input Area with new theme */}
       <div className="flex-shrink-0 relative z-10">
-        <div className="glass-dark rounded-2xl p-4 border border-cosmic-cyan/20 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-cosmic-cyan/40">
+        <div className="glass-dark rounded-2xl p-4 border border-modern-indigo/20 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-modern-indigo/40">
           <div className="flex items-end space-x-3 md:space-x-4">
             <div className="flex-1">
               <ChatInput 

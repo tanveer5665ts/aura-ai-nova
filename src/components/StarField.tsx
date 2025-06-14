@@ -48,19 +48,19 @@ const StarField: React.FC = () => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw nebula gradient background
+      // Draw nebula gradient background with new theme
       const gradient = ctx.createRadialGradient(
         canvas.width / 2, canvas.height / 2, 0,
         canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
       );
-      gradient.addColorStop(0, 'rgba(139, 92, 246, 0.1)');
-      gradient.addColorStop(0.5, 'rgba(0, 212, 255, 0.05)');
-      gradient.addColorStop(1, 'rgba(11, 20, 38, 1)');
+      gradient.addColorStop(0, 'rgba(168, 85, 247, 0.1)');
+      gradient.addColorStop(0.5, 'rgba(99, 102, 241, 0.05)');
+      gradient.addColorStop(1, 'rgba(15, 23, 42, 1)');
 
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Animate and draw stars
+      // Animate and draw stars with new theme colors
       starsRef.current.forEach(star => {
         // Update position
         star.y -= star.speed;
@@ -72,11 +72,11 @@ const StarField: React.FC = () => {
         // Twinkle effect
         star.opacity = Math.sin(Date.now() * 0.001 + star.x) * 0.5 + 0.5;
 
-        // Draw star
+        // Draw star with new theme color
         ctx.save();
         ctx.globalAlpha = star.opacity;
-        ctx.fillStyle = '#00D4FF';
-        ctx.shadowColor = '#00D4FF';
+        ctx.fillStyle = '#6366F1';
+        ctx.shadowColor = '#6366F1';
         ctx.shadowBlur = star.size * 2;
         
         ctx.beginPath();
@@ -109,7 +109,7 @@ const StarField: React.FC = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 -z-10"
-      style={{ background: 'linear-gradient(135deg, #0B1426 0%, #1A2332 50%, #2D3748 100%)' }}
+      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)' }}
     />
   );
 };

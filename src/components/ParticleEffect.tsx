@@ -7,7 +7,7 @@ const ParticleEffect: React.FC = () => {
       {[...Array(20)].map((_, i) => (
         <div
           key={i}
-          className="absolute w-1 h-1 bg-cosmic-cyan rounded-full opacity-30 animate-particle-float"
+          className="absolute w-1 h-1 bg-modern-indigo rounded-full opacity-30 animate-particle-float"
           style={{
             left: `${Math.random() * 100}%`,
             animationDelay: `${Math.random() * 10}s`,
@@ -18,7 +18,7 @@ const ParticleEffect: React.FC = () => {
       {[...Array(15)].map((_, i) => (
         <div
           key={`purple-${i}`}
-          className="absolute w-2 h-2 bg-cosmic-purple rounded-full opacity-20 animate-particle-float"
+          className="absolute w-2 h-2 bg-modern-purple rounded-full opacity-20 animate-particle-float"
           style={{
             left: `${Math.random() * 100}%`,
             animationDelay: `${Math.random() * 8}s`,
@@ -29,7 +29,7 @@ const ParticleEffect: React.FC = () => {
       {[...Array(10)].map((_, i) => (
         <div
           key={`pink-${i}`}
-          className="absolute w-1.5 h-1.5 bg-cosmic-pink rounded-full opacity-25 animate-particle-float"
+          className="absolute w-1.5 h-1.5 bg-modern-pink rounded-full opacity-25 animate-particle-float"
           style={{
             left: `${Math.random() * 100}%`,
             animationDelay: `${Math.random() * 12}s`,
