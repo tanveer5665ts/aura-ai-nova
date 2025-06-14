@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import PersonalityControls from './PersonalityControls';
 
 interface PersonalityTraits {
   creativity: number;
@@ -12,9 +13,14 @@ interface PersonalityTraits {
 interface AIPersonalityCoreProps {
   currentMood: string;
   isActive: boolean;
+  onTraitsChange?: (traits: PersonalityTraits) => void;
 }
 
-const AIPersonalityCore: React.FC<AIPersonalityCoreProps> = ({ currentMood, isActive }) => {
+const AIPersonalityCore: React.FC<AIPersonalityCoreProps> = ({ 
+  currentMood, 
+  isActive, 
+  onTraitsChange 
+}) => {
   const [traits, setTraits] = useState<PersonalityTraits>({
     creativity: 0.8,
     logic: 0.9,
@@ -24,6 +30,7 @@ const AIPersonalityCore: React.FC<AIPersonalityCoreProps> = ({ currentMood, isAc
   });
 
   const [neuralActivity, setNeuralActivity] = useState<number[]>([]);
+  const [showControls, setShowControls] = useState(false);
 
   useEffect(() => {
     // Simulate neural activity based on personality
@@ -36,6 +43,20 @@ const AIPersonalityCore: React.FC<AIPersonalityCoreProps> = ({ currentMood, isAc
 
     return () => clearInterval(interval);
   }, [traits]);
+
+  // Notify parent component of trait changes
+  useEffect(() => {
+    if (onTraitsChange) {
+      onTraitsChange(traits);
+    }
+  }, [traits, onTraitsChange]);
+
+  const handleTraitChange = (trait: keyof PersonalityTraits, value: number) => {
+    setTraits(prev => ({
+      ...prev,
+      [trait]: value
+    }));
+  };
 
   const getTraitColor = (value: number) => {
     if (value > 0.8) return '#00FF88';
@@ -75,6 +96,13 @@ const AIPersonalityCore: React.FC<AIPersonalityCoreProps> = ({ currentMood, isAc
           </div>
         )}
       </div>
+
+      <PersonalityControls
+        traits={traits}
+        onTraitChange={handleTraitChange}
+        isVisible={showControls}
+        onToggle={() => setShowControls(!showControls)}
+      />
     </div>
   );
 };

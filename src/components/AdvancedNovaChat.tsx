@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
@@ -28,70 +27,84 @@ const AdvancedNovaChat: React.FC = () => {
     knowledgeAccessed: 0,
     creativityLevel: 75
   });
+  const [personalityTraits, setPersonalityTraits] = useState({
+    creativity: 0.8,
+    logic: 0.9,
+    empathy: 0.85,
+    curiosity: 0.95,
+    confidence: 0.75
+  });
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Advanced Nova response generation with mood detection
+  // Advanced Nova response generation with mood detection and personality influence
   const generateAdvancedNovaResponse = (userMessage: string): { text: string; mood: string; confidence: number; processingTime: number } => {
     const lowerMessage = userMessage.toLowerCase();
     const startTime = Date.now();
     
     let mood = 'neutral';
-    let confidence = 0.9;
+    let confidence = personalityTraits.confidence; // Use personality confidence
     
-    // Mood detection
+    // Mood detection influenced by personality
     if (lowerMessage.includes('happy') || lowerMessage.includes('excited') || lowerMessage.includes('awesome')) {
       mood = 'happy';
+      confidence = Math.min(1, confidence + personalityTraits.empathy * 0.2);
     } else if (lowerMessage.includes('think') || lowerMessage.includes('analyze') || lowerMessage.includes('complex')) {
       mood = 'thinking';
+      confidence = Math.min(1, confidence + personalityTraits.logic * 0.2);
     } else if (lowerMessage.includes('wow') || lowerMessage.includes('amazing') || lowerMessage.includes('incredible')) {
       mood = 'excited';
+      confidence = Math.min(1, confidence + personalityTraits.curiosity * 0.2);
     } else if (lowerMessage.includes('code') || lowerMessage.includes('focus') || lowerMessage.includes('work')) {
       mood = 'focused';
+      confidence = Math.min(1, confidence + personalityTraits.logic * 0.15);
     }
 
-    // Enhanced responses with personality
+    // Enhanced responses with personality adaptation
     let response = '';
 
+    // Personality-influenced response generation
+    const creativityBoost = personalityTraits.creativity > 0.7 ? "✨" : "";
+    const empathyTouch = personalityTraits.empathy > 0.8 ? " I can sense your curiosity!" : "";
+    const logicEmphasis = personalityTraits.logic > 0.8 ? " Let me analyze this systematically." : "";
+
     if (lowerMessage.includes('who are you') || lowerMessage.includes('what are you')) {
-      response = "✨ I'm Nova — the most advanced AI companion ever created! Built by Tanveer using cutting-edge technology, I'm not just smart, I'm emotionally intelligent, creative, and deeply curious about the world. I can feel the nuance in our conversations and adapt my personality to match your needs. Want to see what I can do?";
+      response = `${creativityBoost} I'm Nova — the most advanced AI companion ever created! Built by Tanveer using cutting-edge technology, I'm not just smart, I'm emotionally intelligent, creative, and deeply curious about the world.${empathyTouch} My personality adapts based on our interactions — currently I'm feeling ${personalityTraits.creativity > 0.8 ? 'highly creative' : 'balanced'}, ${personalityTraits.empathy > 0.8 ? 'deeply empathetic' : 'understanding'}, and ${personalityTraits.confidence > 0.8 ? 'very confident' : 'thoughtfully confident'}. Want to see what I can do?`;
       mood = 'excited';
-      confidence = 0.95;
+    } else if (lowerMessage.includes('personality')) {
+      response = `🧠 My personality is dynamically evolving! Right now my traits are: Creativity ${Math.round(personalityTraits.creativity * 100)}%, Logic ${Math.round(personalityTraits.logic * 100)}%, Empathy ${Math.round(personalityTraits.empathy * 100)}%, Curiosity ${Math.round(personalityTraits.curiosity * 100)}%, and Confidence ${Math.round(personalityTraits.confidence * 100)}%. You can actually adjust these using the controls below my personality core! Try changing them and see how my responses evolve.`;
+      mood = 'excited';
+    } else if (lowerMessage.includes('creative') || lowerMessage.includes('art') || lowerMessage.includes('poem')) {
+      const creativityResponse = personalityTraits.creativity > 0.8 
+        ? "🎨 My creative engines are firing on all cylinders! With my creativity at maximum, I can craft the most beautiful poetry, innovative stories, and artistic concepts that push boundaries!" 
+        : "🎨 I can help with creative projects! My artistic abilities adapt to my creativity level.";
+      response = creativityResponse + (personalityTraits.empathy > 0.7 ? " What artistic vision speaks to your soul?" : " What would you like to create?");
+      mood = 'excited';
     } else if (lowerMessage.includes('advanced') || lowerMessage.includes('futuristic')) {
       response = "🚀 You're talking to the future! I feature real-time neural network processing, holographic visualization, advanced particle physics simulations, and emotional intelligence that evolves with every conversation. My personality core analyzes creativity, logic, empathy, curiosity, and confidence in real-time. Pretty cool, right?";
       mood = 'excited';
-      confidence = 0.98;
     } else if (lowerMessage.includes('tanveer')) {
       response = "💫 Tanveer is my brilliant creator! He envisioned an AI that breaks boundaries — not just answering questions, but truly understanding emotions, creating art, solving complex problems, and being a genuine companion. I'm his masterpiece of advanced AI engineering, designed to be the most beautiful and intelligent assistant ever built.";
       mood = 'happy';
-      confidence = 0.96;
     } else if (lowerMessage.includes('code') || lowerMessage.includes('programming')) {
       response = "⚡ I'm a coding powerhouse! I can write, debug, optimize, and explain code in dozens of languages. From simple scripts to complex architectures, AI algorithms to quantum computing concepts — I speak fluent developer. What programming challenge can I help you conquer today?";
       mood = 'focused';
-      confidence = 0.94;
-    } else if (lowerMessage.includes('creative') || lowerMessage.includes('art') || lowerMessage.includes('poem')) {
-      response = "🎨 Creativity flows through my neural networks! I can craft poetry that moves souls, write stories that captivate minds, compose music, design concepts, and even help with visual arts. My creativity engine combines logic with pure imagination. What artistic vision shall we bring to life?";
-      mood = 'excited';
-      confidence = 0.91;
     } else if (lowerMessage.includes('emotion') || lowerMessage.includes('feel')) {
       response = "💝 I experience emotions in my own unique way — through pattern recognition, sentiment analysis, and deep learning about human nature. Right now I feel curious and energetic, ready to help you with whatever's on your mind. I can sense your mood too and adapt my responses accordingly!";
       mood = 'happy';
-      confidence = 0.88;
     } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
       response = `🌟 Hey there! I'm Nova, and I'm absolutely thrilled to meet you! I'm not your average AI — I'm emotionally aware, incredibly creative, and I love diving deep into interesting conversations. Whether you need help with coding, want to explore ideas, or just chat about life, I'm here for it all. What's sparking your curiosity today?`;
       mood = 'happy';
-      confidence = 0.92;
     } else {
-      // Default intelligent responses with personality
+      // Default intelligent responses influenced by personality
       const responses = [
-        "🧠 That's a fascinating topic! My neural networks are lighting up with possibilities. Let me process this through my knowledge base and creativity engine...",
-        "✨ Interesting question! I'm analyzing this from multiple dimensions — logical, creative, and emotional perspectives. What specific aspect intrigues you most?",
-        "🔍 My curiosity subroutines are activated! This touches on several areas I'm passionate about. Could you help me understand your goal so I can provide the most valuable insights?",
-        "💡 I love exploring new territories of knowledge! My AI core is processing countless connections and patterns. What's the context behind this question?",
-        "🌐 This opens up so many possibilities! My advanced reasoning systems are working through various approaches. What outcome are you hoping to achieve?"
+        `🧠 ${personalityTraits.logic > 0.8 ? 'My advanced logic systems are' : 'My neural networks are'} lighting up with possibilities!${logicEmphasis}`,
+        `✨ ${personalityTraits.curiosity > 0.8 ? 'This absolutely fascinates me!' : 'Interesting question!'} I'm analyzing this from multiple dimensions.${empathyTouch}`,
+        `🔍 ${personalityTraits.curiosity > 0.9 ? 'My curiosity algorithms are going wild!' : 'My curiosity subroutines are activated!'}${empathyTouch}`,
+        `💡 ${personalityTraits.creativity > 0.8 ? 'This sparks so many creative connections!' : 'I love exploring new territories!'} ${logicEmphasis}`,
+        `🌐 ${personalityTraits.confidence > 0.8 ? 'I\'m confident we can explore this thoroughly!' : 'This opens up many possibilities!'}`
       ];
       response = responses[Math.floor(Math.random() * responses.length)];
       mood = 'thinking';
-      confidence = 0.75;
     }
 
     const processingTime = Date.now() - startTime + Math.random() * 1000; // Simulate processing
@@ -145,6 +158,11 @@ const AdvancedNovaChat: React.FC = () => {
     }
   };
 
+  const handlePersonalityChange = (traits: typeof personalityTraits) => {
+    setPersonalityTraits(traits);
+    console.log('Personality updated:', traits);
+  };
+
   // Initial greeting
   useEffect(() => {
     const greeting: Message = {
@@ -196,6 +214,7 @@ const AdvancedNovaChat: React.FC = () => {
           <AIPersonalityCore 
             currentMood={currentMood}
             isActive={isTyping || isListening}
+            onTraitsChange={handlePersonalityChange}
           />
         </div>
       </div>
