@@ -5,7 +5,6 @@ import AIPersonalityCore from './AIPersonalityCore';
 import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import VoiceButton from './VoiceButton';
-import { Eye, EyeOff } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -23,8 +22,6 @@ const AdvancedNovaChat: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [currentMood, setCurrentMood] = useState<'neutral' | 'happy' | 'thinking' | 'excited' | 'focused'>('neutral');
-  const [apiKey, setApiKey] = useState('');
-  const [showApiKey, setShowApiKey] = useState(false);
   const [aiStats, setAiStats] = useState({
     messagesProcessed: 0,
     averageResponseTime: 1200,
@@ -40,27 +37,11 @@ const AdvancedNovaChat: React.FC = () => {
   });
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Load API key from localStorage on component mount
-  useEffect(() => {
-    const savedApiKey = localStorage.getItem('nova-api-key');
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-    }
-  }, []);
-
-  // Save API key to localStorage when it changes
-  useEffect(() => {
-    if (apiKey) {
-      localStorage.setItem('nova-api-key', apiKey);
-    }
-  }, [apiKey]);
+  // Integrated key
+  const apiKey = 'AIzaSyDe6CpKNun9p3Nti2sAwIEQb94WTyhTxZg';
 
   // Call Google Gemini API
   const callGeminiAPI = async (userMessage: string): Promise<string> => {
-    if (!apiKey) {
-      return "Please enter your Google API key first to enable real AI responses! 🔑";
-    }
-
     try {
       const personalityPrompt = `You are Nova, an advanced AI assistant created by Tanveer. Your personality traits are:
 - Creativity: ${Math.round(personalityTraits.creativity * 100)}%
@@ -93,7 +74,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
       return data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't generate a response. Please try again.";
     } catch (error) {
       console.error('Gemini API Error:', error);
-      return "Sorry, I'm having trouble connecting to my AI brain right now. Please check your API key or try again later. 🤖";
+      return "Sorry, I'm having trouble connecting to my AI brain right now. Please try again later. 🤖";
     }
   };
 
@@ -166,7 +147,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
       console.error('Error generating response:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: "Sorry, I encountered an error. Please check your API key and try again.",
+        text: "Sorry, I encountered an error. Please try again.",
         isUser: false,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         mood: 'neutral',
@@ -195,9 +176,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
   useEffect(() => {
     const greeting: Message = {
       id: 'greeting',
-      text: apiKey 
-        ? "🌟 Hey, I'm Nova – your intelligent AI companion powered by Google's Gemini! I'm now connected to real AI and can answer any question you have. My personality adapts based on the controls below. What would you like to explore together?"
-        : "🌟 Hey, I'm Nova! Please enter your Google API key below to unlock my full AI capabilities. Once connected, I can help you with anything! ✨",
+      text: "🌟 Hey, I'm Nova – your intelligent AI companion powered by Google's Gemini! I'm now connected to real AI and can answer any question you have. My personality adapts based on the controls below. What would you like to explore together?",
       isUser: false,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       mood: 'excited',
@@ -205,7 +184,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
     };
     setMessages([greeting]);
     setCurrentMood('excited');
-  }, [apiKey]);
+  }, []);
 
   // Auto-scroll
   useEffect(() => {
@@ -216,31 +195,6 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto p-4 relative">
-      {/* API Key Input */}
-      <div className="absolute top-4 left-4 glass-dark rounded-lg p-3 border border-cosmic-cyan/20 z-10 w-80">
-        <div className="text-xs text-cosmic-cyan font-mono mb-2">GOOGLE API KEY</div>
-        <div className="flex items-center space-x-2">
-          <div className="relative flex-1">
-            <input
-              type={showApiKey ? "text" : "password"}
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Enter your Google API key..."
-              className="w-full bg-transparent text-white text-xs p-2 border border-gray-600 rounded focus:border-cosmic-cyan focus:outline-none"
-            />
-          </div>
-          <button
-            onClick={() => setShowApiKey(!showApiKey)}
-            className="p-2 glass border border-gray-600 rounded hover:border-cosmic-cyan transition-colors"
-          >
-            {showApiKey ? <EyeOff className="w-3 h-3 text-gray-400" /> : <Eye className="w-3 h-3 text-gray-400" />}
-          </button>
-        </div>
-        <div className="text-xs text-gray-400 mt-1">
-          {apiKey ? "✅ API Key Set" : "❌ No API Key"}
-        </div>
-      </div>
-
       {/* AI Status Panel */}
       <div className="absolute top-4 right-4 glass-dark rounded-lg p-3 border border-cosmic-cyan/20 z-10">
         <div className="text-xs text-cosmic-cyan font-mono mb-2">NOVA SYSTEM STATUS</div>
@@ -248,7 +202,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
           <div className="text-gray-400">Messages: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
           <div className="text-gray-400">Avg Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
           <div className="text-gray-400">Knowledge: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
-          <div className="text-gray-400">AI: <span className="text-pink-400">{apiKey ? 'LIVE' : 'OFFLINE'}</span></div>
+          <div className="text-gray-400">AI: <span className="text-pink-400">LIVE</span></div>
         </div>
       </div>
 
@@ -262,10 +216,10 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
           />
           <h1 className="text-3xl font-bold cosmic-text mt-6 mb-2">Nova AI</h1>
           <p className="text-gray-400 text-sm mb-2">
-            {apiKey ? 'Powered by Google Gemini' : 'Awaiting API Connection'}
+            Powered by Google Gemini
           </p>
           <div className="text-xs text-cosmic-cyan font-mono">
-            Mode: {currentMood.toUpperCase()} | Status: {apiKey ? 'ONLINE' : 'OFFLINE'}
+            Mode: {currentMood.toUpperCase()} | Status: ONLINE
           </div>
           
           <AIPersonalityCore 
@@ -312,13 +266,13 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
           <ChatInput 
             onSendMessage={handleSendMessage}
             disabled={isTyping}
-            placeholder={apiKey ? "Ask Nova anything... I have access to Google's AI! ✨" : "Enter your API key above to start chatting..."}
+            placeholder="Ask Nova anything... I have access to Google's AI! ✨"
           />
         </div>
         <VoiceButton 
           isListening={isListening}
           onToggle={handleVoiceToggle}
-          disabled={isTyping || !apiKey}
+          disabled={isTyping}
         />
       </div>
     </div>
