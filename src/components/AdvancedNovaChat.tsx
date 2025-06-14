@@ -39,6 +39,7 @@ const AdvancedNovaChat: React.FC = () => {
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
+  const [showPersonalityControls, setShowPersonalityControls] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Integrated key
@@ -198,7 +199,48 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         <div className="absolute top-1/2 left-1/2 w-60 h-60 bg-cyan-500/5 rounded-full blur-3xl animate-float-gentle" style={{ animationDelay: '4s' }} />
       </div>
 
-      {/* Enhanced Status Panel with Settings Button */}
+      {/* Personality Controls Button - Left Side */}
+      <div className="absolute top-4 left-4 z-20">
+        <button
+          onClick={() => setShowPersonalityControls(!showPersonalityControls)}
+          className="glass-dark rounded-xl p-3 border border-purple-500/20 shadow-2xl backdrop-blur-xl hover:border-purple-500/40 transition-all duration-300 hover:scale-105"
+        >
+          <div className="flex items-center space-x-2">
+            <Sparkles className="w-5 h-5 text-purple-400" />
+            <span className="text-xs text-purple-400 font-mono tracking-wider">PERSONALITY</span>
+          </div>
+        </button>
+      </div>
+
+      {/* Personality Controls Panel */}
+      {showPersonalityControls && (
+        <div className="absolute top-20 left-4 z-20 w-80 animate-fade-in">
+          <div className="glass-dark rounded-xl p-6 border border-purple-500/20 shadow-2xl backdrop-blur-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">AI Personality</h3>
+              <button
+                onClick={() => setShowPersonalityControls(false)}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-medium text-purple-400 mb-3">Core Traits</h4>
+                <AIPersonalityCore 
+                  currentMood={currentMood}
+                  isActive={isTyping || isListening}
+                  onTraitsChange={handlePersonalityChange}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Enhanced Status Panel with Settings Button - Right Side */}
       <div className="absolute top-4 right-4 z-20 flex items-center space-x-3">
         {/* Settings Button */}
         <button
@@ -240,17 +282,6 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
             </div>
             
             <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-blue-400 mb-3">AI Personality</h4>
-                <div className="scale-90 origin-top">
-                  <AIPersonalityCore 
-                    currentMood={currentMood}
-                    isActive={isTyping || isListening}
-                    onTraitsChange={handlePersonalityChange}
-                  />
-                </div>
-              </div>
-              
               <div className="border-t border-gray-600 pt-4">
                 <h4 className="text-sm font-medium text-purple-400 mb-3">System Stats</h4>
                 <div className="grid grid-cols-2 gap-3 text-xs">
