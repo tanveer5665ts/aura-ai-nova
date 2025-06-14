@@ -4,6 +4,7 @@ import AIPersonalityCore from './AIPersonalityCore';
 import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import VoiceButton from './VoiceButton';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface Message {
   id: string;
@@ -34,7 +35,7 @@ const AdvancedNovaChat: React.FC = () => {
     curiosity: 0.95,
     confidence: 0.75
   });
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Integrated key
   const apiKey = 'AIzaSyDe6CpKNun9p3Nti2sAwIEQb94WTyhTxZg';
@@ -185,10 +186,13 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
     setCurrentMood('excited');
   }, []);
 
-  // Auto-scroll
+  // Auto-scroll to bottom
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    if (scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }
     }
   }, [messages, isTyping]);
 
@@ -230,34 +234,33 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
       </div>
 
       {/* Chat Messages */}
-      <div 
-        ref={chatContainerRef}
-        className="flex-1 overflow-y-auto hide-scrollbar space-y-4 pb-4"
-      >
-        {messages.map((message) => (
-          <div key={message.id} className="relative">
+      <ScrollArea ref={scrollAreaRef} className="flex-1 pr-4">
+        <div className="space-y-4 pb-4">
+          {messages.map((message) => (
+            <div key={message.id} className="relative">
+              <ChatBubble
+                message={message.text}
+                isUser={message.isUser}
+                timestamp={message.timestamp}
+              />
+              {!message.isUser && message.confidence && (
+                <div className="ml-4 mt-1 text-xs text-gray-500 font-mono">
+                  Confidence: {Math.round(message.confidence * 100)}% | 
+                  {message.processingTime && ` Processing: ${Math.round(message.processingTime)}ms`}
+                </div>
+              )}
+            </div>
+          ))}
+          
+          {isTyping && (
             <ChatBubble
-              message={message.text}
-              isUser={message.isUser}
-              timestamp={message.timestamp}
+              message=""
+              isUser={false}
+              isTyping={true}
             />
-            {!message.isUser && message.confidence && (
-              <div className="ml-4 mt-1 text-xs text-gray-500 font-mono">
-                Confidence: {Math.round(message.confidence * 100)}% | 
-                {message.processingTime && ` Processing: ${Math.round(message.processingTime)}ms`}
-              </div>
-            )}
-          </div>
-        ))}
-        
-        {isTyping && (
-          <ChatBubble
-            message=""
-            isUser={false}
-            isTyping={true}
-          />
-        )}
-      </div>
+          )}
+        </div>
+      </ScrollArea>
 
       {/* Enhanced Input Area */}
       <div className="flex items-end space-x-4 pt-4">
