@@ -11,6 +11,7 @@ interface Particle {
   maxLife: number;
   color: string;
   type: 'neural' | 'data' | 'energy';
+  phase: number;
 }
 
 const AdvancedParticleSystem: React.FC = () => {
@@ -41,19 +42,20 @@ const AdvancedParticleSystem: React.FC = () => {
       return {
         x,
         y,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2,
-        size: Math.random() * 3 + 1,
-        life: 255,
-        maxLife: 255,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        size: Math.random() * 2 + 0.5,
+        life: 300,
+        maxLife: 300,
         color: colors[type],
-        type
+        type,
+        phase: Math.random() * Math.PI * 2
       };
     };
 
     const initParticles = () => {
       particlesRef.current = [];
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 60; i++) {
         const types: Particle['type'][] = ['neural', 'data', 'energy'];
         const type = types[Math.floor(Math.random() * types.length)];
         particlesRef.current.push(
@@ -67,31 +69,39 @@ const AdvancedParticleSystem: React.FC = () => {
     };
 
     const updateParticles = () => {
+      const time = Date.now() * 0.001;
+      
       particlesRef.current.forEach((particle, index) => {
-        // Physics
+        // Smooth orbital movement
+        particle.phase += 0.01;
+        particle.vx += Math.sin(time + particle.phase) * 0.002;
+        particle.vy += Math.cos(time + particle.phase) * 0.002;
+        
+        // Apply velocity with damping for smoother movement
         particle.x += particle.vx;
         particle.y += particle.vy;
+        particle.vx *= 0.99;
+        particle.vy *= 0.99;
         
-        // Mouse attraction
+        // Gentle mouse attraction
         const dx = mouseRef.current.x - particle.x;
         const dy = mouseRef.current.y - particle.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         
-        if (distance < 100) {
-          const force = (100 - distance) / 100;
-          particle.vx += dx * force * 0.001;
-          particle.vy += dy * force * 0.001;
+        if (distance < 150) {
+          const force = (150 - distance) / 150 * 0.0005;
+          particle.vx += dx * force;
+          particle.vy += dy * force;
         }
 
-        // Boundaries
-        if (particle.x < 0 || particle.x > canvas.width) particle.vx *= -0.8;
-        if (particle.y < 0 || particle.y > canvas.height) particle.vy *= -0.8;
-        
-        particle.x = Math.max(0, Math.min(canvas.width, particle.x));
-        particle.y = Math.max(0, Math.min(canvas.height, particle.y));
+        // Smooth boundary wrapping
+        if (particle.x < -20) particle.x = canvas.width + 20;
+        if (particle.x > canvas.width + 20) particle.x = -20;
+        if (particle.y < -20) particle.y = canvas.height + 20;
+        if (particle.y > canvas.height + 20) particle.y = -20;
 
-        // Life decay
-        particle.life -= 0.5;
+        // Smooth life cycle
+        particle.life -= 0.2;
         if (particle.life <= 0) {
           const types: Particle['type'][] = ['neural', 'data', 'energy'];
           const type = types[Math.floor(Math.random() * types.length)];
@@ -111,9 +121,16 @@ const AdvancedParticleSystem: React.FC = () => {
           const dy = particle.y - otherParticle.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 80) {
-            const opacity = (80 - distance) / 80;
-            ctx.strokeStyle = `rgba(0, 212, 255, ${opacity * 0.3})`;
+          if (distance < 100) {
+            const opacity = (100 - distance) / 100 * 0.15;
+            const gradient = ctx.createLinearGradient(
+              particle.x, particle.y,
+              otherParticle.x, otherParticle.y
+            );
+            gradient.addColorStop(0, `rgba(0, 212, 255, ${opacity})`);
+            gradient.addColorStop(1, `rgba(139, 92, 246, ${opacity})`);
+            
+            ctx.strokeStyle = gradient;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(particle.x, particle.y);
@@ -125,27 +142,32 @@ const AdvancedParticleSystem: React.FC = () => {
     };
 
     const drawParticles = () => {
+      const time = Date.now() * 0.002;
+      
       particlesRef.current.forEach(particle => {
-        const opacity = particle.life / particle.maxLife;
+        const opacity = (particle.life / particle.maxLife) * 0.8;
+        const pulse = Math.sin(time + particle.phase) * 0.3 + 0.7;
         
         ctx.save();
         ctx.globalAlpha = opacity;
         
-        // Glow effect
+        // Smooth glow effect
+        const glowSize = particle.size * pulse * 2;
         ctx.shadowColor = particle.color;
-        ctx.shadowBlur = particle.size * 3;
+        ctx.shadowBlur = glowSize * 2;
         
         ctx.fillStyle = particle.color;
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.arc(particle.x, particle.y, particle.size * pulse, 0, Math.PI * 2);
         ctx.fill();
         
-        // Neural network nodes
+        // Subtle ring for neural type
         if (particle.type === 'neural') {
           ctx.strokeStyle = particle.color;
-          ctx.lineWidth = 1;
+          ctx.lineWidth = 0.5;
+          ctx.globalAlpha = opacity * 0.5;
           ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size * 2, 0, Math.PI * 2);
+          ctx.arc(particle.x, particle.y, particle.size * pulse * 1.8, 0, Math.PI * 2);
           ctx.stroke();
         }
         
