@@ -8,6 +8,8 @@ import GlossyParticleOverlay from './GlossyParticleOverlay';
 import GlossyOverlay from './GlossyOverlay';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
+import { useTranslation } from "@/hooks/useTranslation";
+import { Globe } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -18,6 +20,19 @@ interface Message {
   confidence?: number;
   processingTime?: number;
 }
+
+const LANGUAGE_OPTIONS = [
+  { code: "en", label: "English" },
+  { code: "es", label: "Spanish" },
+  { code: "fr", label: "French" },
+  { code: "de", label: "German" },
+  { code: "it", label: "Italian" },
+  { code: "zh", label: "Chinese" },
+  { code: "ru", label: "Russian" },
+  { code: "ja", label: "Japanese" },
+  { code: "pt", label: "Portuguese" },
+  { code: "ar", label: "Arabic" },
+];
 
 const AdvancedNovaChat: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -40,7 +55,10 @@ const AdvancedNovaChat: React.FC = () => {
   });
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [translationEnabled, setTranslationEnabled] = useState(false);
+  const [targetLang, setTargetLang] = useState("es");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { translate } = useTranslation();
 
   // Integrated key
   const apiKey = 'AIzaSyDe6CpKNun9p3Nti2sAwIEQb94WTyhTxZg';
@@ -129,14 +147,23 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
 
     try {
       const aiResponse = await generateAdvancedNovaResponse(messageText);
+
+      let novaText = aiResponse.text;
+      let translatedText = null;
+      if (translationEnabled && targetLang !== "en") {
+        translatedText = await translate(novaText, targetLang, "en");
+      }
+
       const novaMessage: Message = {
         id: (Date.now() + 1).toString(),
-        text: aiResponse.text,
+        text: novaText,
         isUser: false,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         mood: aiResponse.mood,
         confidence: aiResponse.confidence,
-        processingTime: aiResponse.processingTime
+        processingTime: aiResponse.processingTime,
+        // @ts-ignore
+        translated: translatedText ? translatedText : undefined,
       };
 
       setMessages(prev => [...prev, novaMessage]);
@@ -189,9 +216,36 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
     }
   }, [messages, isTyping]);
 
+  // Enhanced: Translation controls at top right
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden">
-      
+
+      {/* --- Translation Controls --- */}
+      <div className="absolute top-4 left-4 z-20">
+        <div className="glass-dark flex items-center rounded-xl p-2 border border-cosmic-cyan/20 shadow-2xl backdrop-blur-xl space-x-2 animate-fade-in">
+          <Globe className="w-5 h-5 text-cosmic-cyan" />
+          <span className="text-xs font-mono text-cosmic-cyan">Translate</span>
+          <input
+            type="checkbox"
+            checked={translationEnabled}
+            onChange={e => setTranslationEnabled(e.target.checked)}
+            className="accent-cosmic-cyan mx-1"
+            id="toggle-translation"
+          />
+          <select
+            className="glass border rounded px-1 py-0.5 text-xs text-cosmic-cyan bg-slate-950/60"
+            value={targetLang}
+            onChange={e => setTargetLang(e.target.value)}
+            disabled={!translationEnabled}
+            style={{ minWidth: 60 }}
+          >
+            {LANGUAGE_OPTIONS.map(l =>
+              <option value={l.code} key={l.code}>{l.label}</option>
+            )}
+          </select>
+        </div>
+      </div>
+
       {/* --- ENHANCED ANIMATED BACKGROUNDS --- */}
       <GlossyParticleOverlay />
       <GlossyOverlay />
@@ -290,6 +344,12 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
                     isUser={message.isUser}
                     timestamp={message.timestamp}
                   />
+                  {/* Real-time translation for AI messages */}
+                  {translationEnabled && message.translated && (
+                    <div className="mt-2 bg-cosmic-cyan/10 border-l-4 border-cosmic-cyan px-3 py-1 rounded text-cosmic-cyan text-xs max-w-lg">
+                      {message.translated}
+                    </div>
+                  )}
                 </div>
               ))}
               
