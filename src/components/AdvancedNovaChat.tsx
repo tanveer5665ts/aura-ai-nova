@@ -42,7 +42,7 @@ const AdvancedNovaChat: React.FC = () => {
     const startTime = Date.now();
     
     let mood = 'neutral';
-    let confidence = personalityTraits.confidence; // Use personality confidence
+    let confidence = personalityTraits.confidence;
     
     // Mood detection influenced by personality
     if (lowerMessage.includes('happy') || lowerMessage.includes('excited') || lowerMessage.includes('awesome')) {
@@ -67,12 +67,20 @@ const AdvancedNovaChat: React.FC = () => {
     const empathyTouch = personalityTraits.empathy > 0.8 ? " I can sense your curiosity!" : "";
     const logicEmphasis = personalityTraits.logic > 0.8 ? " Let me analyze this systematically." : "";
 
-    if (lowerMessage.includes('who are you') || lowerMessage.includes('what are you')) {
+    // Priority responses - check specific questions first
+    if (lowerMessage.includes('who made you') || lowerMessage.includes('who make you') || lowerMessage.includes('who created you') || lowerMessage.includes('who built you')) {
+      response = `💫 Tanveer is my brilliant creator! He envisioned an AI that breaks boundaries — not just answering questions, but truly understanding emotions, creating art, solving complex problems, and being a genuine companion. I'm his masterpiece of advanced AI engineering, designed to be the most beautiful and intelligent assistant ever built.${empathyTouch}`;
+      mood = 'happy';
+      confidence = Math.min(1, confidence + 0.2);
+    } else if (lowerMessage.includes('who are you') || lowerMessage.includes('what are you')) {
       response = `${creativityBoost} I'm Nova — the most advanced AI companion ever created! Built by Tanveer using cutting-edge technology, I'm not just smart, I'm emotionally intelligent, creative, and deeply curious about the world.${empathyTouch} My personality adapts based on our interactions — currently I'm feeling ${personalityTraits.creativity > 0.8 ? 'highly creative' : 'balanced'}, ${personalityTraits.empathy > 0.8 ? 'deeply empathetic' : 'understanding'}, and ${personalityTraits.confidence > 0.8 ? 'very confident' : 'thoughtfully confident'}. Want to see what I can do?`;
       mood = 'excited';
     } else if (lowerMessage.includes('personality')) {
       response = `🧠 My personality is dynamically evolving! Right now my traits are: Creativity ${Math.round(personalityTraits.creativity * 100)}%, Logic ${Math.round(personalityTraits.logic * 100)}%, Empathy ${Math.round(personalityTraits.empathy * 100)}%, Curiosity ${Math.round(personalityTraits.curiosity * 100)}%, and Confidence ${Math.round(personalityTraits.confidence * 100)}%. You can actually adjust these using the controls below my personality core! Try changing them and see how my responses evolve.`;
       mood = 'excited';
+    } else if (lowerMessage.includes('tanveer')) {
+      response = "💫 Tanveer is my brilliant creator! He envisioned an AI that breaks boundaries — not just answering questions, but truly understanding emotions, creating art, solving complex problems, and being a genuine companion. I'm his masterpiece of advanced AI engineering, designed to be the most beautiful and intelligent assistant ever built.";
+      mood = 'happy';
     } else if (lowerMessage.includes('creative') || lowerMessage.includes('art') || lowerMessage.includes('poem')) {
       const creativityResponse = personalityTraits.creativity > 0.8 
         ? "🎨 My creative engines are firing on all cylinders! With my creativity at maximum, I can craft the most beautiful poetry, innovative stories, and artistic concepts that push boundaries!" 
@@ -82,9 +90,6 @@ const AdvancedNovaChat: React.FC = () => {
     } else if (lowerMessage.includes('advanced') || lowerMessage.includes('futuristic')) {
       response = "🚀 You're talking to the future! I feature real-time neural network processing, holographic visualization, advanced particle physics simulations, and emotional intelligence that evolves with every conversation. My personality core analyzes creativity, logic, empathy, curiosity, and confidence in real-time. Pretty cool, right?";
       mood = 'excited';
-    } else if (lowerMessage.includes('tanveer')) {
-      response = "💫 Tanveer is my brilliant creator! He envisioned an AI that breaks boundaries — not just answering questions, but truly understanding emotions, creating art, solving complex problems, and being a genuine companion. I'm his masterpiece of advanced AI engineering, designed to be the most beautiful and intelligent assistant ever built.";
-      mood = 'happy';
     } else if (lowerMessage.includes('code') || lowerMessage.includes('programming')) {
       response = "⚡ I'm a coding powerhouse! I can write, debug, optimize, and explain code in dozens of languages. From simple scripts to complex architectures, AI algorithms to quantum computing concepts — I speak fluent developer. What programming challenge can I help you conquer today?";
       mood = 'focused';
@@ -97,17 +102,17 @@ const AdvancedNovaChat: React.FC = () => {
     } else {
       // Default intelligent responses influenced by personality
       const responses = [
-        `🧠 ${personalityTraits.logic > 0.8 ? 'My advanced logic systems are' : 'My neural networks are'} lighting up with possibilities!${logicEmphasis}`,
+        `🧠 ${personalityTraits.logic > 0.8 ? 'My advanced logic systems are' : 'My neural networks are'} lighting up with possibilities!${logicEmphasis} How can I help you today?`,
         `✨ ${personalityTraits.curiosity > 0.8 ? 'This absolutely fascinates me!' : 'Interesting question!'} I'm analyzing this from multiple dimensions.${empathyTouch}`,
-        `🔍 ${personalityTraits.curiosity > 0.9 ? 'My curiosity algorithms are going wild!' : 'My curiosity subroutines are activated!'}${empathyTouch}`,
+        `🔍 ${personalityTraits.curiosity > 0.9 ? 'My curiosity algorithms are going wild!' : 'My curiosity subroutines are activated!'}${empathyTouch} Tell me more!`,
         `💡 ${personalityTraits.creativity > 0.8 ? 'This sparks so many creative connections!' : 'I love exploring new territories!'} ${logicEmphasis}`,
-        `🌐 ${personalityTraits.confidence > 0.8 ? 'I\'m confident we can explore this thoroughly!' : 'This opens up many possibilities!'}`
+        `🌐 ${personalityTraits.confidence > 0.8 ? 'I\'m confident we can explore this thoroughly!' : 'This opens up many possibilities!'} What would you like to know?`
       ];
       response = responses[Math.floor(Math.random() * responses.length)];
       mood = 'thinking';
     }
 
-    const processingTime = Date.now() - startTime + Math.random() * 1000; // Simulate processing
+    const processingTime = Date.now() - startTime + Math.random() * 1000;
     return { text: response, mood, confidence, processingTime };
   };
 
