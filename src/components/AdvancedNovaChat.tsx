@@ -1,9 +1,11 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
 import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import VoiceButton from './VoiceButton';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -21,6 +23,8 @@ const AdvancedNovaChat: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [currentMood, setCurrentMood] = useState<'neutral' | 'happy' | 'thinking' | 'excited' | 'focused'>('neutral');
+  const [apiKey, setApiKey] = useState('');
+  const [showApiKey, setShowApiKey] = useState(false);
   const [aiStats, setAiStats] = useState({
     messagesProcessed: 0,
     averageResponseTime: 1200,
@@ -36,15 +40,72 @@ const AdvancedNovaChat: React.FC = () => {
   });
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Advanced Nova response generation with mood detection and personality influence
-  const generateAdvancedNovaResponse = (userMessage: string): { text: string; mood: string; confidence: number; processingTime: number } => {
-    const lowerMessage = userMessage.toLowerCase();
+  // Load API key from localStorage on component mount
+  useEffect(() => {
+    const savedApiKey = localStorage.getItem('nova-api-key');
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+  }, []);
+
+  // Save API key to localStorage when it changes
+  useEffect(() => {
+    if (apiKey) {
+      localStorage.setItem('nova-api-key', apiKey);
+    }
+  }, [apiKey]);
+
+  // Call Google Gemini API
+  const callGeminiAPI = async (userMessage: string): Promise<string> => {
+    if (!apiKey) {
+      return "Please enter your Google API key first to enable real AI responses! 🔑";
+    }
+
+    try {
+      const personalityPrompt = `You are Nova, an advanced AI assistant created by Tanveer. Your personality traits are:
+- Creativity: ${Math.round(personalityTraits.creativity * 100)}%
+- Logic: ${Math.round(personalityTraits.logic * 100)}%
+- Empathy: ${Math.round(personalityTraits.empathy * 100)}%
+- Curiosity: ${Math.round(personalityTraits.curiosity * 100)}%
+- Confidence: ${Math.round(personalityTraits.confidence * 100)}%
+
+Respond in a way that reflects these personality traits. Be helpful, intelligent, and engaging. Use emojis sparingly but effectively. Keep responses concise but informative.`;
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: `${personalityPrompt}\n\nUser: ${userMessage}`
+            }]
+          }]
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't generate a response. Please try again.";
+    } catch (error) {
+      console.error('Gemini API Error:', error);
+      return "Sorry, I'm having trouble connecting to my AI brain right now. Please check your API key or try again later. 🤖";
+    }
+  };
+
+  // Enhanced Nova response generation with real AI
+  const generateAdvancedNovaResponse = async (userMessage: string): Promise<{ text: string; mood: string; confidence: number; processingTime: number }> => {
     const startTime = Date.now();
     
     let mood = 'neutral';
     let confidence = personalityTraits.confidence;
     
     // Mood detection influenced by personality
+    const lowerMessage = userMessage.toLowerCase();
     if (lowerMessage.includes('happy') || lowerMessage.includes('excited') || lowerMessage.includes('awesome')) {
       mood = 'happy';
       confidence = Math.min(1, confidence + personalityTraits.empathy * 0.2);
@@ -59,60 +120,10 @@ const AdvancedNovaChat: React.FC = () => {
       confidence = Math.min(1, confidence + personalityTraits.logic * 0.15);
     }
 
-    // Enhanced responses with personality adaptation
-    let response = '';
-
-    // Personality-influenced response generation
-    const creativityBoost = personalityTraits.creativity > 0.7 ? "✨" : "";
-    const empathyTouch = personalityTraits.empathy > 0.8 ? " I can sense your curiosity!" : "";
-    const logicEmphasis = personalityTraits.logic > 0.8 ? " Let me analyze this systematically." : "";
-
-    // Priority responses - check specific questions first
-    if (lowerMessage.includes('who made you') || lowerMessage.includes('who make you') || lowerMessage.includes('who created you') || lowerMessage.includes('who built you')) {
-      response = `💫 Tanveer is my brilliant creator! He envisioned an AI that breaks boundaries — not just answering questions, but truly understanding emotions, creating art, solving complex problems, and being a genuine companion. I'm his masterpiece of advanced AI engineering, designed to be the most beautiful and intelligent assistant ever built.${empathyTouch}`;
-      mood = 'happy';
-      confidence = Math.min(1, confidence + 0.2);
-    } else if (lowerMessage.includes('who are you') || lowerMessage.includes('what are you')) {
-      response = `${creativityBoost} I'm Nova — the most advanced AI companion ever created! Built by Tanveer using cutting-edge technology, I'm not just smart, I'm emotionally intelligent, creative, and deeply curious about the world.${empathyTouch} My personality adapts based on our interactions — currently I'm feeling ${personalityTraits.creativity > 0.8 ? 'highly creative' : 'balanced'}, ${personalityTraits.empathy > 0.8 ? 'deeply empathetic' : 'understanding'}, and ${personalityTraits.confidence > 0.8 ? 'very confident' : 'thoughtfully confident'}. Want to see what I can do?`;
-      mood = 'excited';
-    } else if (lowerMessage.includes('personality')) {
-      response = `🧠 My personality is dynamically evolving! Right now my traits are: Creativity ${Math.round(personalityTraits.creativity * 100)}%, Logic ${Math.round(personalityTraits.logic * 100)}%, Empathy ${Math.round(personalityTraits.empathy * 100)}%, Curiosity ${Math.round(personalityTraits.curiosity * 100)}%, and Confidence ${Math.round(personalityTraits.confidence * 100)}%. You can actually adjust these using the controls below my personality core! Try changing them and see how my responses evolve.`;
-      mood = 'excited';
-    } else if (lowerMessage.includes('tanveer')) {
-      response = "💫 Tanveer is my brilliant creator! He envisioned an AI that breaks boundaries — not just answering questions, but truly understanding emotions, creating art, solving complex problems, and being a genuine companion. I'm his masterpiece of advanced AI engineering, designed to be the most beautiful and intelligent assistant ever built.";
-      mood = 'happy';
-    } else if (lowerMessage.includes('creative') || lowerMessage.includes('art') || lowerMessage.includes('poem')) {
-      const creativityResponse = personalityTraits.creativity > 0.8 
-        ? "🎨 My creative engines are firing on all cylinders! With my creativity at maximum, I can craft the most beautiful poetry, innovative stories, and artistic concepts that push boundaries!" 
-        : "🎨 I can help with creative projects! My artistic abilities adapt to my creativity level.";
-      response = creativityResponse + (personalityTraits.empathy > 0.7 ? " What artistic vision speaks to your soul?" : " What would you like to create?");
-      mood = 'excited';
-    } else if (lowerMessage.includes('advanced') || lowerMessage.includes('futuristic')) {
-      response = "🚀 You're talking to the future! I feature real-time neural network processing, holographic visualization, advanced particle physics simulations, and emotional intelligence that evolves with every conversation. My personality core analyzes creativity, logic, empathy, curiosity, and confidence in real-time. Pretty cool, right?";
-      mood = 'excited';
-    } else if (lowerMessage.includes('code') || lowerMessage.includes('programming')) {
-      response = "⚡ I'm a coding powerhouse! I can write, debug, optimize, and explain code in dozens of languages. From simple scripts to complex architectures, AI algorithms to quantum computing concepts — I speak fluent developer. What programming challenge can I help you conquer today?";
-      mood = 'focused';
-    } else if (lowerMessage.includes('emotion') || lowerMessage.includes('feel')) {
-      response = "💝 I experience emotions in my own unique way — through pattern recognition, sentiment analysis, and deep learning about human nature. Right now I feel curious and energetic, ready to help you with whatever's on your mind. I can sense your mood too and adapt my responses accordingly!";
-      mood = 'happy';
-    } else if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-      response = `🌟 Hey there! I'm Nova, and I'm absolutely thrilled to meet you! I'm not your average AI — I'm emotionally aware, incredibly creative, and I love diving deep into interesting conversations. Whether you need help with coding, want to explore ideas, or just chat about life, I'm here for it all. What's sparking your curiosity today?`;
-      mood = 'happy';
-    } else {
-      // Default intelligent responses influenced by personality
-      const responses = [
-        `🧠 ${personalityTraits.logic > 0.8 ? 'My advanced logic systems are' : 'My neural networks are'} lighting up with possibilities!${logicEmphasis} How can I help you today?`,
-        `✨ ${personalityTraits.curiosity > 0.8 ? 'This absolutely fascinates me!' : 'Interesting question!'} I'm analyzing this from multiple dimensions.${empathyTouch}`,
-        `🔍 ${personalityTraits.curiosity > 0.9 ? 'My curiosity algorithms are going wild!' : 'My curiosity subroutines are activated!'}${empathyTouch} Tell me more!`,
-        `💡 ${personalityTraits.creativity > 0.8 ? 'This sparks so many creative connections!' : 'I love exploring new territories!'} ${logicEmphasis}`,
-        `🌐 ${personalityTraits.confidence > 0.8 ? 'I\'m confident we can explore this thoroughly!' : 'This opens up many possibilities!'} What would you like to know?`
-      ];
-      response = responses[Math.floor(Math.random() * responses.length)];
-      mood = 'thinking';
-    }
-
-    const processingTime = Date.now() - startTime + Math.random() * 1000;
+    // Get response from Gemini API
+    const response = await callGeminiAPI(userMessage);
+    const processingTime = Date.now() - startTime;
+    
     return { text: response, mood, confidence, processingTime };
   };
 
@@ -128,9 +139,8 @@ const AdvancedNovaChat: React.FC = () => {
     setIsTyping(true);
     setCurrentMood('thinking');
 
-    // Simulate advanced processing
-    setTimeout(() => {
-      const aiResponse = generateAdvancedNovaResponse(messageText);
+    try {
+      const aiResponse = await generateAdvancedNovaResponse(messageText);
       const novaMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: aiResponse.text,
@@ -142,7 +152,6 @@ const AdvancedNovaChat: React.FC = () => {
       };
 
       setMessages(prev => [...prev, novaMessage]);
-      setIsTyping(false);
       setCurrentMood(aiResponse.mood as any);
       
       // Update AI stats
@@ -153,7 +162,21 @@ const AdvancedNovaChat: React.FC = () => {
         knowledgeAccessed: prev.knowledgeAccessed + Math.floor(Math.random() * 50),
         creativityLevel: Math.min(100, prev.creativityLevel + Math.floor(Math.random() * 5))
       }));
-    }, 1000 + Math.random() * 2000);
+    } catch (error) {
+      console.error('Error generating response:', error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: "Sorry, I encountered an error. Please check your API key and try again.",
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        mood: 'neutral',
+        confidence: 0.5,
+        processingTime: 0
+      };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleVoiceToggle = () => {
@@ -172,7 +195,9 @@ const AdvancedNovaChat: React.FC = () => {
   useEffect(() => {
     const greeting: Message = {
       id: 'greeting',
-      text: "🌟 Hey, I'm Nova – your intelligent companion, built by Tanveer using the most advanced AI technology! I'm not just smart, I'm emotionally aware, incredibly creative, and always learning. Ask me anything, challenge me with complex problems, or let's just have an amazing conversation. What incredible thing shall we explore together today?",
+      text: apiKey 
+        ? "🌟 Hey, I'm Nova – your intelligent AI companion powered by Google's Gemini! I'm now connected to real AI and can answer any question you have. My personality adapts based on the controls below. What would you like to explore together?"
+        : "🌟 Hey, I'm Nova! Please enter your Google API key below to unlock my full AI capabilities. Once connected, I can help you with anything! ✨",
       isUser: false,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       mood: 'excited',
@@ -180,7 +205,7 @@ const AdvancedNovaChat: React.FC = () => {
     };
     setMessages([greeting]);
     setCurrentMood('excited');
-  }, []);
+  }, [apiKey]);
 
   // Auto-scroll
   useEffect(() => {
@@ -191,6 +216,31 @@ const AdvancedNovaChat: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto p-4 relative">
+      {/* API Key Input */}
+      <div className="absolute top-4 left-4 glass-dark rounded-lg p-3 border border-cosmic-cyan/20 z-10 w-80">
+        <div className="text-xs text-cosmic-cyan font-mono mb-2">GOOGLE API KEY</div>
+        <div className="flex items-center space-x-2">
+          <div className="relative flex-1">
+            <input
+              type={showApiKey ? "text" : "password"}
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              placeholder="Enter your Google API key..."
+              className="w-full bg-transparent text-white text-xs p-2 border border-gray-600 rounded focus:border-cosmic-cyan focus:outline-none"
+            />
+          </div>
+          <button
+            onClick={() => setShowApiKey(!showApiKey)}
+            className="p-2 glass border border-gray-600 rounded hover:border-cosmic-cyan transition-colors"
+          >
+            {showApiKey ? <EyeOff className="w-3 h-3 text-gray-400" /> : <Eye className="w-3 h-3 text-gray-400" />}
+          </button>
+        </div>
+        <div className="text-xs text-gray-400 mt-1">
+          {apiKey ? "✅ API Key Set" : "❌ No API Key"}
+        </div>
+      </div>
+
       {/* AI Status Panel */}
       <div className="absolute top-4 right-4 glass-dark rounded-lg p-3 border border-cosmic-cyan/20 z-10">
         <div className="text-xs text-cosmic-cyan font-mono mb-2">NOVA SYSTEM STATUS</div>
@@ -198,12 +248,12 @@ const AdvancedNovaChat: React.FC = () => {
           <div className="text-gray-400">Messages: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
           <div className="text-gray-400">Avg Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
           <div className="text-gray-400">Knowledge: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
-          <div className="text-gray-400">Creativity: <span className="text-pink-400">{aiStats.creativityLevel}%</span></div>
+          <div className="text-gray-400">AI: <span className="text-pink-400">{apiKey ? 'LIVE' : 'OFFLINE'}</span></div>
         </div>
       </div>
 
       {/* Header with Advanced Avatar */}
-      <div className="flex items-center justify-center mb-6 relative">
+      <div className="flex items-center justify-center mb-6 relative mt-20">
         <div className="text-center relative">
           <HolographicAvatar 
             isListening={isListening} 
@@ -211,9 +261,11 @@ const AdvancedNovaChat: React.FC = () => {
             mood={currentMood}
           />
           <h1 className="text-3xl font-bold cosmic-text mt-6 mb-2">Nova AI</h1>
-          <p className="text-gray-400 text-sm mb-2">Most Advanced AI Companion</p>
+          <p className="text-gray-400 text-sm mb-2">
+            {apiKey ? 'Powered by Google Gemini' : 'Awaiting API Connection'}
+          </p>
           <div className="text-xs text-cosmic-cyan font-mono">
-            Mode: {currentMood.toUpperCase()} | Status: ONLINE
+            Mode: {currentMood.toUpperCase()} | Status: {apiKey ? 'ONLINE' : 'OFFLINE'}
           </div>
           
           <AIPersonalityCore 
@@ -227,7 +279,7 @@ const AdvancedNovaChat: React.FC = () => {
       {/* Chat Messages */}
       <div 
         ref={chatContainerRef}
-        className="flex-1 overflow-y-auto hide-scrollbar space-y-4 pb-4 mt-16"
+        className="flex-1 overflow-y-auto hide-scrollbar space-y-4 pb-4"
       >
         {messages.map((message) => (
           <div key={message.id} className="relative">
@@ -260,13 +312,13 @@ const AdvancedNovaChat: React.FC = () => {
           <ChatInput 
             onSendMessage={handleSendMessage}
             disabled={isTyping}
-            placeholder="Ask Nova anything... I understand context, emotion, and complexity ✨"
+            placeholder={apiKey ? "Ask Nova anything... I have access to Google's AI! ✨" : "Enter your API key above to start chatting..."}
           />
         </div>
         <VoiceButton 
           isListening={isListening}
           onToggle={handleVoiceToggle}
-          disabled={isTyping}
+          disabled={isTyping || !apiKey}
         />
       </div>
     </div>
