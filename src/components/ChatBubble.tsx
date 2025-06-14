@@ -8,6 +8,23 @@ interface ChatBubbleProps {
   isTyping?: boolean;
 }
 
+// Simple markdown renderer for basic formatting
+const renderMarkdown = (text: string) => {
+  // Replace **text** with bold
+  let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  
+  // Replace *text* with italic
+  formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  
+  // Replace numbered lists
+  formatted = formatted.replace(/^\d+\.\s+(.+)$/gm, '<div class="ml-4 mb-1">• $1</div>');
+  
+  // Replace line breaks
+  formatted = formatted.replace(/\n/g, '<br />');
+  
+  return formatted;
+};
+
 const ChatBubble: React.FC<ChatBubbleProps> = ({ 
   message, 
   isUser, 
@@ -35,11 +52,12 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
             </div>
           ) : (
             <div>
-              <p className={`text-sm leading-relaxed ${
-                isUser ? 'text-white' : 'cosmic-text font-medium'
-              }`}>
-                {message}
-              </p>
+              <div 
+                className={`text-sm leading-relaxed ${
+                  isUser ? 'text-white' : 'cosmic-text font-medium'
+                }`}
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(message) }}
+              />
               {timestamp && (
                 <p className="text-xs text-gray-400 mt-1 opacity-70">
                   {timestamp}
