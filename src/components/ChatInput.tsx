@@ -34,46 +34,60 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   const handleClick = () => {
     setIsClicked(true);
-    setTimeout(() => setIsClicked(false), 300);
+    setTimeout(() => setIsClicked(false), 500);
   };
 
   return (
     <form onSubmit={handleSubmit} className="relative group">
-      {/* Outer glow effect */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-500" />
+      {/* Ultra-glossy outer glow effect */}
+      <div className="absolute -inset-2 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-3xl blur-lg opacity-20 group-hover:opacity-50 transition duration-700" />
       
-      {/* Main container with holographic effect */}
-      <div className={`relative glass-dark rounded-2xl border p-1 transition-all duration-500 ${
+      {/* Glossy reflection layer */}
+      <div className="absolute -inset-1 bg-gradient-to-br from-white/5 to-transparent rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-glossy-reflection" />
+      </div>
+      
+      {/* Main container with ultra-glossy effect */}
+      <div className={`relative glass-ultra rounded-2xl border p-1 transition-all duration-700 ${
         isClicked 
-          ? 'border-cyan-400/80 shadow-2xl shadow-cyan-400/30 scale-[1.02]' 
+          ? 'border-cyan-300/90 shadow-2xl shadow-cyan-400/40 scale-[1.02]' 
           : isFocused
-          ? 'border-purple-400/60 shadow-xl shadow-purple-400/20'
-          : 'border-slate-600/40 hover:border-cyan-400/50'
+          ? 'border-purple-300/70 shadow-xl shadow-purple-400/30'
+          : 'border-slate-500/50 hover:border-cyan-400/60'
       }`}>
         
-        {/* Animated background pattern */}
+        {/* Ultra-glossy animated background pattern */}
         <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-          <div className={`absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-purple-500/5 to-pink-500/5 transition-opacity duration-500 ${
+          <div className={`absolute inset-0 bg-gradient-to-r from-cyan-400/8 via-purple-400/8 to-pink-400/8 transition-opacity duration-700 ${
             isFocused || isClicked ? 'opacity-100' : 'opacity-0'
           }`} />
           
-          {/* Floating particles */}
-          {[...Array(6)].map((_, i) => (
+          {/* Enhanced floating particles with glossy effect */}
+          {[...Array(8)].map((_, i) => (
             <div
               key={i}
-              className={`absolute w-1 h-1 bg-cyan-400 rounded-full transition-all duration-1000 ${
-                isFocused ? 'opacity-60 animate-pulse' : 'opacity-0'
+              className={`absolute w-1.5 h-1.5 rounded-full transition-all duration-1500 ${
+                isFocused ? 'opacity-80 animate-pulse' : 'opacity-0'
               }`}
               style={{
-                left: `${20 + i * 12}%`,
-                top: `${30 + (i % 2) * 40}%`,
-                animationDelay: `${i * 0.2}s`
+                left: `${15 + i * 10}%`,
+                top: `${25 + (i % 2) * 50}%`,
+                animationDelay: `${i * 0.25}s`,
+                background: `linear-gradient(45deg, ${
+                  i % 3 === 0 ? '#00D4FF' : i % 3 === 1 ? '#8B5CF6' : '#EC4899'
+                }, transparent)`,
+                boxShadow: `0 0 8px currentColor`
               }}
             />
           ))}
+
+          {/* Ultra-glossy shimmer effect */}
+          <div className={`absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent transition-opacity duration-500 ${
+            isFocused || isClicked ? 'opacity-100 animate-shimmer' : 'opacity-0'
+          }`} />
         </div>
 
-        <div className="flex items-end space-x-3 p-4 relative z-10">
+        <div className="flex items-end space-x-3 p-3 relative z-10">
           <div className="flex-1 relative">
             <textarea
               value={message}
@@ -85,7 +99,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
               placeholder={placeholder}
               disabled={disabled}
               rows={1}
-              className={`w-full bg-transparent text-white placeholder-gray-400 resize-none focus:outline-none text-sm leading-relaxed transition-all duration-300 ${
+              className={`w-full bg-transparent text-white placeholder-gray-300 resize-none focus:outline-none text-sm leading-relaxed transition-all duration-500 ${
                 isClicked ? 'text-cyan-100' : isFocused ? 'text-purple-100' : ''
               }`}
               style={{
@@ -100,11 +114,12 @@ const ChatInput: React.FC<ChatInputProps> = ({
               }}
             />
             
-            {/* Dynamic ripple effect */}
+            {/* Ultra-glossy dynamic ripple effect */}
             {isClicked && (
-              <div className="absolute inset-0 rounded-xl">
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 via-purple-400/20 to-pink-400/20 rounded-xl animate-ping" />
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 to-purple-400/10 rounded-xl animate-pulse" />
+              <div className="absolute inset-0 rounded-xl overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/30 via-purple-400/30 to-pink-400/30 rounded-xl animate-ping" />
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/15 to-purple-400/15 rounded-xl animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
               </div>
             )}
           </div>
@@ -112,32 +127,40 @@ const ChatInput: React.FC<ChatInputProps> = ({
           <button
             type="submit"
             disabled={!message.trim() || disabled}
-            className={`relative p-3 rounded-xl transition-all duration-300 transform hover:scale-110 active:scale-95 group ${
+            className={`relative p-3 rounded-xl transition-all duration-500 transform hover:scale-110 active:scale-95 group overflow-hidden ${
               message.trim() && !disabled
-                ? 'bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-cyan-500/50'
-                : 'glass border border-gray-600 text-gray-400 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 text-white shadow-lg hover:shadow-cyan-500/60'
+                : 'glass border border-gray-500 text-gray-400 cursor-not-allowed'
             }`}
           >
-            {/* Button glow effect */}
+            {/* Ultra-glossy button glow effect */}
             {message.trim() && !disabled && (
-              <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl blur opacity-30 group-hover:opacity-60 transition duration-300" />
+              <>
+                <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-purple-500 rounded-xl blur opacity-40 group-hover:opacity-80 transition duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 animate-shimmer" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 group-hover:opacity-100 transition duration-300" />
+              </>
             )}
             <Send className="w-4 h-4 relative z-10" />
           </button>
         </div>
+
+        {/* Ultra-glossy top highlight */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
 
-      {/* Enhanced animated bottom line */}
+      {/* Ultra-enhanced animated bottom line with glossy effect */}
       <div className="absolute -bottom-1 left-0 right-0 h-1 rounded-full overflow-hidden">
-        <div className={`h-full transition-all duration-500 ${
+        <div className={`h-full transition-all duration-700 ${
           isClicked
-            ? 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 opacity-100 scale-x-100'
+            ? 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 opacity-100 scale-x-100 shadow-lg shadow-cyan-400/50'
             : isFocused
-            ? 'bg-gradient-to-r from-purple-400 to-cyan-400 opacity-80 scale-x-100'
+            ? 'bg-gradient-to-r from-purple-400 to-cyan-400 opacity-90 scale-x-100 shadow-md shadow-purple-400/30'
             : 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 opacity-0 scale-x-0'
         }`}>
-          {/* Animated shimmer effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+          {/* Ultra-glossy animated shimmer effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
         </div>
       </div>
     </form>
