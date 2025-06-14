@@ -5,7 +5,6 @@ import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import VoiceButton from './VoiceButton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -37,7 +36,6 @@ const AdvancedNovaChat: React.FC = () => {
     curiosity: 0.95,
     confidence: 0.75
   });
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Integrated key
@@ -222,60 +220,59 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto p-2 md:p-4 relative">
-      {/* AI Status Panel - Fixed */}
-      <div className="absolute top-2 right-2 md:top-4 md:right-4 glass-dark rounded-lg p-2 md:p-3 border border-cosmic-cyan/20 z-20">
-        <div className="text-xs text-cosmic-cyan font-mono mb-1 md:mb-2">NOVA STATUS</div>
-        <div className="grid grid-cols-2 gap-1 md:gap-2 text-xs">
-          <div className="text-gray-400">Msgs: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
-          <div className="text-gray-400">AI: <span className="text-pink-400">LIVE</span></div>
-          <div className="text-gray-400 md:block hidden">Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
-          <div className="text-gray-400 md:block hidden">KB: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
+      {/* Nova AI Logo - Fixed at top center */}
+      <div className="fixed top-2 left-1/2 transform -translate-x-1/2 z-30">
+        <div className="text-center">
+          <h1 className="text-lg md:text-xl font-bold cosmic-text mb-1">Nova AI</h1>
+          <p className="text-gray-400 text-xs">
+            Powered by Tanveer AI
+          </p>
+          <div className="text-xs text-cosmic-cyan font-mono">
+            Mode: {currentMood.toUpperCase()} | Status: ONLINE
+          </div>
         </div>
       </div>
 
-      {/* Animated Nova Logo - Moves to top-left when scrolled */}
-      <div className={`fixed transition-all duration-700 ease-in-out z-30 ${
-        isScrolled 
-          ? 'top-4 left-4 scale-50' 
-          : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-100'
-      }`}>
-        <div className="scale-75 md:scale-100">
-          <HolographicAvatar 
-            isListening={isListening} 
-            isSpeaking={isSpeaking}
-            mood={currentMood}
+      {/* AI Personality Core - Fixed at top left */}
+      <div className="fixed top-2 left-2 z-30">
+        <div className="glass-dark rounded-lg p-2 border border-cosmic-cyan/20">
+          <div className="text-xs text-cosmic-cyan mb-1 font-mono">PERSONALITY CORE</div>
+          <AIPersonalityCore 
+            currentMood={currentMood}
+            isActive={isTyping || isListening}
+            onTraitsChange={handlePersonalityChange}
           />
         </div>
-        {!isScrolled && (
-          <div className="text-center mt-2 transition-opacity duration-500">
-            <h1 className="text-xl md:text-2xl font-bold cosmic-text mb-1">Nova AI</h1>
-            <p className="text-gray-400 text-xs md:text-sm">
-              Powered by Tanveer AI
-            </p>
-            <div className="text-xs text-cosmic-cyan font-mono">
-              Mode: {currentMood.toUpperCase()} | Status: ONLINE
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Animated Personality Core - Moves to center when scrolled */}
-      <div className={`fixed transition-all duration-700 ease-in-out z-30 ${
+      {/* AI Status Panel - Fixed at top right */}
+      <div className="fixed top-2 right-2 z-30">
+        <div className="glass-dark rounded-lg p-2 border border-cosmic-cyan/20">
+          <div className="text-xs text-cosmic-cyan font-mono mb-1">NOVA STATUS</div>
+          <div className="grid grid-cols-2 gap-1 text-xs">
+            <div className="text-gray-400">Msgs: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
+            <div className="text-gray-400">AI: <span className="text-pink-400">LIVE</span></div>
+            <div className="text-gray-400">Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
+            <div className="text-gray-400">KB: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Holographic Avatar - Center when not scrolled */}
+      <div className={`fixed transition-all duration-700 ease-in-out z-20 ${
         isScrolled 
-          ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-125' 
-          : 'bottom-20 left-1/2 transform -translate-x-1/2 scale-90'
+          ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-75' 
+          : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-100'
       }`}>
-        <AIPersonalityCore 
-          currentMood={currentMood}
-          isActive={isTyping || isListening}
-          onTraitsChange={handlePersonalityChange}
+        <HolographicAvatar 
+          isListening={isListening} 
+          isSpeaking={isSpeaking}
+          mood={currentMood}
         />
       </div>
 
-      {/* Chat Content - Adjust top margin based on scroll state */}
-      <div className={`flex flex-col h-full transition-all duration-700 ${
-        isScrolled ? 'mt-16' : 'mt-64 md:mt-80'
-      }`}>
+      {/* Chat Content - Adjust top margin */}
+      <div className="flex flex-col h-full mt-20">
         {/* Scrollable Chat Messages */}
         <ScrollArea ref={scrollAreaRef} className="flex-1 pr-2 md:pr-4 mb-4">
           <div className="space-y-3 md:space-y-4 pb-4">
