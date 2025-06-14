@@ -10,6 +10,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 import { useTranslation } from "@/hooks/useTranslation";
 import { Globe } from 'lucide-react';
+import NovaLoadingScreen from './NovaLoadingScreen';
 
 interface Message {
   id: string;
