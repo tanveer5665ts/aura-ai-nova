@@ -1,10 +1,11 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
 import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import VoiceButton from './VoiceButton';
+import GlossyParticleOverlay from './GlossyParticleOverlay';
+import GlossyOverlay from './GlossyOverlay';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
@@ -191,8 +192,12 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden">
       
+      {/* --- ENHANCED ANIMATED BACKGROUNDS --- */}
+      <GlossyParticleOverlay />
+      <GlossyOverlay />
+
       {/* Advanced Background Effects */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-20 right-20 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl animate-float-gentle" />
         <div className="absolute bottom-20 left-20 w-80 h-80 bg-purple-500/5 rounded-full blur-3xl animate-float-gentle" style={{ animationDelay: '2s' }} />
         <div className="absolute top-1/2 left-1/2 w-60 h-60 bg-cyan-500/5 rounded-full blur-3xl animate-float-gentle" style={{ animationDelay: '4s' }} />
@@ -302,11 +307,14 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         </>
       )}
 
-      {/* Enhanced Fixed Input Area */}
-      <div className="flex-shrink-0 relative z-10 p-2 md:p-3">
+      {/* --- ENHANCED FROSTED/NEON GLOW EDGE ON INPUT CONTAINER --- */}
+      <div className="flex-shrink-0 relative z-20 p-2 md:p-3">
         <div className="max-w-4xl mx-auto">
-          <div className="glass-dark rounded-2xl p-2 border border-blue-500/20 shadow-2xl backdrop-blur-xl">
-            <div className="flex items-end space-x-2">
+          <div className="glass-dark rounded-2xl p-2 border border-blue-500/20 shadow-2xl backdrop-blur-xl relative overflow-visible">
+            {/* Glow border */}
+            <div className="absolute -inset-2 rounded-3xl border-4 border-cyan-400/40 blur-md opacity-30 pointer-events-none animate-pulse"></div>
+            <div className="absolute -inset-3 rounded-3xl border-2 border-purple-400/20 blur-lg opacity-15 pointer-events-none"></div>
+            <div className="flex items-end space-x-2 relative z-10">
               <div className="flex-1">
                 <ChatInput 
                   onSendMessage={handleSendMessage}

@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface ChatBubbleProps {
@@ -42,11 +41,14 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-glossy-reflection" />
         </div>
 
-        <div className={`relative px-3 py-2 rounded-2xl transition-all duration-500 hover:scale-[1.02] glass-ultra ${
+        <div className={`relative px-4 py-2 rounded-3xl transition-all duration-500 hover:scale-[1.021] glass-ultra ${
           isUser
-            ? 'border border-blue-400/40 text-white ml-auto hover:border-blue-300/60 hover:shadow-xl hover:shadow-blue-500/20'
-            : 'border border-purple-400/40 text-white hover:border-purple-300/60 hover:shadow-xl hover:shadow-purple-500/20'
+            ? 'border border-blue-400/40 text-white ml-auto hover:border-blue-300/60 hover:shadow-2xl hover:shadow-blue-500/40'
+            : 'border border-purple-400/40 text-white hover:border-purple-300/70 hover:shadow-2xl hover:shadow-purple-500/40'
         }`}>
+          
+          {/* Extra shimmer highlight */}
+          <div className="absolute left-2 top-2 w-8 h-4 rounded-full bg-white/13 blur-lg opacity-50 pointer-events-none animate-glossy-shine"/>
           
           {/* Ultra-glossy animated background gradient */}
           <div className={`absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-15 transition-opacity duration-500 ${
@@ -100,6 +102,9 @@ const ChatBubble: React.FC<ChatBubbleProps> = ({
               )}
             </div>
           )}
+
+          {/* Enhanced shimmer highlight at top left */}
+          <div className="absolute top-0 left-0 w-1/3 h-2 rounded-bl-3xl bg-white/20 blur mt-0.5 ml-0.5 opacity-30 pointer-events-none animate-glossy-shine" />
 
           {/* Ultra-glossy top highlight */}
           <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

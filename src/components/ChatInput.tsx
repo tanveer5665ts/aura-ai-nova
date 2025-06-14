@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Send } from 'lucide-react';
 
@@ -39,6 +38,11 @@ const ChatInput: React.FC<ChatInputProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="relative group">
+      {/* Extra glassy glowing ring effect */}
+      <div className="absolute -inset-3 pointer-events-none">
+        <div className="rounded-2xl w-full h-full border-4 opacity-30 border-cyan-300/60 blur-lg animate-neon-flow"></div>
+      </div>
+
       {/* Ultra-glossy outer glow effect */}
       <div className="absolute -inset-2 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 rounded-3xl blur-lg opacity-20 group-hover:opacity-50 transition duration-700" />
       
@@ -48,12 +52,12 @@ const ChatInput: React.FC<ChatInputProps> = ({
       </div>
       
       {/* Main container with ultra-glossy effect */}
-      <div className={`relative glass-ultra rounded-2xl border p-1 transition-all duration-700 ${
+      <div className={`relative glass-ultra rounded-2xl border p-1 transition-all duration-700 shadow-md ${
         isClicked 
           ? 'border-cyan-300/90 shadow-2xl shadow-cyan-400/40 scale-[1.02]' 
           : isFocused
-          ? 'border-purple-300/70 shadow-xl shadow-purple-400/30'
-          : 'border-slate-500/50 hover:border-cyan-400/60'
+          ? 'border-purple-300/80 ring-4 ring-cyan-300/50 shadow-xl shadow-purple-400/30'
+          : 'border-slate-500/60 hover:border-cyan-400/70'
       }`}>
         
         {/* Ultra-glossy animated background pattern */}
@@ -149,19 +153,15 @@ const ChatInput: React.FC<ChatInputProps> = ({
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
 
-      {/* Ultra-enhanced animated bottom line with glossy effect */}
+      {/* Enhanced animated glowing line below input (neon fuse) */}
       <div className="absolute -bottom-1 left-0 right-0 h-1 rounded-full overflow-hidden">
         <div className={`h-full transition-all duration-700 ${
           isClicked
             ? 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 opacity-100 scale-x-100 shadow-lg shadow-cyan-400/50'
             : isFocused
-            ? 'bg-gradient-to-r from-purple-400 to-cyan-400 opacity-90 scale-x-100 shadow-md shadow-purple-400/30'
+            ? 'bg-gradient-to-r from-purple-400 to-cyan-400 opacity-90 scale-x-100 shadow-md shadow-purple-400/30 animate-neon-fuse'
             : 'bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 opacity-0 scale-x-0'
-        }`}>
-          {/* Ultra-glossy animated shimmer effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer" />
-          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent" />
-        </div>
+        }`}></div>
       </div>
     </form>
   );
