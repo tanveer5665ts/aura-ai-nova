@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
@@ -40,8 +39,8 @@ const AdvancedNovaChat: React.FC = () => {
   // Integrated key
   const apiKey = 'AIzaSyDe6CpKNun9p3Nti2sAwIEQb94WTyhTxZg';
 
-  // Call Google Gemini API
-  const callGeminiAPI = async (userMessage: string): Promise<string> => {
+  // Call Tanveer AI API
+  const callTanveerAI = async (userMessage: string): Promise<string> => {
     try {
       const personalityPrompt = `You are Nova, an advanced AI assistant created by Tanveer. Your personality traits are:
 - Creativity: ${Math.round(personalityTraits.creativity * 100)}%
@@ -73,7 +72,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
       const data = await response.json();
       return data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't generate a response. Please try again.";
     } catch (error) {
-      console.error('Gemini API Error:', error);
+      console.error('Tanveer AI Error:', error);
       return "Sorry, I'm having trouble connecting to my AI brain right now. Please try again later. 🤖";
     }
   };
@@ -101,8 +100,8 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
       confidence = Math.min(1, confidence + personalityTraits.logic * 0.15);
     }
 
-    // Get response from Gemini API
-    const response = await callGeminiAPI(userMessage);
+    // Get response from Tanveer AI
+    const response = await callTanveerAI(userMessage);
     const processingTime = Date.now() - startTime;
     
     return { text: response, mood, confidence, processingTime };
@@ -176,7 +175,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
   useEffect(() => {
     const greeting: Message = {
       id: 'greeting',
-      text: "🌟 Hey, I'm Nova – your intelligent AI companion powered by Google's Gemini! I'm now connected to real AI and can answer any question you have. My personality adapts based on the controls below. What would you like to explore together?",
+      text: "🌟 Hey, I'm Nova – your intelligent AI companion powered by Tanveer's advanced AI technology! I'm now connected to real AI and can answer any question you have. My personality adapts based on the controls below. What would you like to explore together?",
       isUser: false,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       mood: 'excited',
@@ -216,7 +215,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
           />
           <h1 className="text-3xl font-bold cosmic-text mt-6 mb-2">Nova AI</h1>
           <p className="text-gray-400 text-sm mb-2">
-            Powered by Google Gemini
+            Powered by Tanveer AI
           </p>
           <div className="text-xs text-cosmic-cyan font-mono">
             Mode: {currentMood.toUpperCase()} | Status: ONLINE
@@ -266,7 +265,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
           <ChatInput 
             onSendMessage={handleSendMessage}
             disabled={isTyping}
-            placeholder="Ask Nova anything... I have access to Google's AI! ✨"
+            placeholder="Ask Nova anything... I have access to Tanveer's AI! ✨"
           />
         </div>
         <VoiceButton 
