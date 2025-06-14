@@ -60,6 +60,7 @@ const AdvancedNovaChat: React.FC = () => {
   const [targetLang, setTargetLang] = useState("es");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { translate } = useTranslation();
+  const [loading, setLoading] = useState(true);
 
   // Integrated key
   const apiKey = 'AIzaSyDe6CpKNun9p3Nti2sAwIEQb94WTyhTxZg';
@@ -216,6 +217,18 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
       }
     }
   }, [messages, isTyping]);
+
+  // Loader timeout simulation (show loader on mount)
+  useEffect(() => {
+    // Startup loader/fake delay for dramatic effect & API warmup (can adjust as needed)
+    const timer = setTimeout(() => setLoading(false), 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading screen before chat UI
+  if (loading) {
+    return <NovaLoadingScreen />;
+  }
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden">
