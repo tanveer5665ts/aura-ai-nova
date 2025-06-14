@@ -199,121 +199,166 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
   }, [messages, isTyping]);
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto p-2 md:p-4">
-      {/* AI Status Panel - Mobile Optimized */}
-      <div className="absolute top-2 right-2 md:top-4 md:right-4 glass-dark rounded-lg p-2 md:p-3 border border-cosmic-cyan/20 z-10">
-        <div className="text-xs text-cosmic-cyan font-mono mb-1 md:mb-2">NOVA STATUS</div>
-        <div className="grid grid-cols-2 gap-1 md:gap-2 text-xs">
-          <div className="text-gray-400">Msgs: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
-          <div className="text-gray-400">AI: <span className="text-pink-400">LIVE</span></div>
-          <div className="text-gray-400 md:block hidden">Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
-          <div className="text-gray-400 md:block hidden">KB: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
+    <div className="flex flex-col h-screen max-w-4xl mx-auto p-2 md:p-4 relative">
+      
+      {/* Enhanced Floating Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Floating orbs */}
+        <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-cosmic-cyan/10 rounded-full blur-3xl animate-float opacity-60" />
+        <div className="absolute top-3/4 right-1/4 w-40 h-40 bg-cosmic-purple/10 rounded-full blur-3xl animate-float opacity-40" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-3/4 w-24 h-24 bg-cosmic-pink/10 rounded-full blur-3xl animate-float opacity-50" style={{ animationDelay: '4s' }} />
+        
+        {/* Gradient streams */}
+        <div className="absolute inset-0 bg-gradient-to-br from-cosmic-cyan/5 via-transparent to-cosmic-purple/5 animate-gradient-shift" />
+      </div>
+
+      {/* Enhanced AI Status Panel */}
+      <div className="absolute top-2 right-2 md:top-4 md:right-4 z-20">
+        <div className="glass-dark rounded-xl p-3 md:p-4 border border-cosmic-cyan/30 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-cosmic-cyan/50 hover:shadow-cosmic-cyan/20">
+          <div className="text-xs text-cosmic-cyan font-mono mb-2 tracking-wider">NOVA STATUS</div>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="text-gray-400 transition-colors duration-200">
+              Msgs: <span className="text-green-400 font-semibold">{aiStats.messagesProcessed}</span>
+            </div>
+            <div className="text-gray-400 transition-colors duration-200">
+              AI: <span className="text-pink-400 font-semibold animate-pulse">LIVE</span>
+            </div>
+            <div className="text-gray-400 md:block hidden transition-colors duration-200">
+              Time: <span className="text-blue-400 font-semibold">{Math.round(aiStats.averageResponseTime)}ms</span>
+            </div>
+            <div className="text-gray-400 md:block hidden transition-colors duration-200">
+              KB: <span className="text-purple-400 font-semibold">{aiStats.knowledgeAccessed}</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Mobile-Responsive Collapsible Header */}
-      <div className="flex-shrink-0 relative mt-12 md:mt-16">
-        {/* Mobile Collapse Toggle */}
+      {/* Enhanced Mobile-Responsive Header */}
+      <div className="flex-shrink-0 relative mt-12 md:mt-16 z-10">
+        {/* Mobile Collapse Toggle with better animation */}
         <button 
           onClick={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
-          className="md:hidden absolute top-0 right-0 z-20 p-2 text-cosmic-cyan"
+          className="md:hidden absolute top-0 right-0 z-20 p-3 text-cosmic-cyan hover:text-cosmic-purple transition-all duration-300 transform hover:scale-110 active:scale-95"
         >
-          {isHeaderCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+          {isHeaderCollapsed ? (
+            <ChevronDown size={20} className="animate-bounce" />
+          ) : (
+            <ChevronUp size={20} className="animate-bounce" />
+          )}
         </button>
 
-        <div className={`text-center transition-all duration-300 ${
-          isHeaderCollapsed ? 'mb-2' : 'mb-4'
+        <div className={`text-center transition-all duration-500 ease-out transform ${
+          isHeaderCollapsed ? 'mb-2 scale-95' : 'mb-4 scale-100'
         }`}>
-          {/* Collapsed Mobile Header */}
+          {/* Enhanced Collapsed Mobile Header */}
           {isHeaderCollapsed ? (
-            <div className="flex items-center justify-center space-x-3">
-              <div className="scale-50">
+            <div className="flex items-center justify-center space-x-4 p-2 rounded-2xl glass backdrop-blur-xl border border-cosmic-cyan/20">
+              <div className="scale-50 transition-transform duration-300">
                 <HolographicAvatar 
                   isListening={isListening} 
                   isSpeaking={isSpeaking}
                   mood={currentMood}
                 />
               </div>
-              <div>
+              <div className="transition-all duration-300">
                 <h1 className="text-lg font-bold cosmic-text">Nova AI</h1>
-                <div className="text-xs text-cosmic-cyan font-mono">
+                <div className="text-xs text-cosmic-cyan font-mono tracking-wider">
                   {currentMood.toUpperCase()}
                 </div>
               </div>
             </div>
           ) : (
-            /* Full Header */
-            <>
-              <div className="scale-75 md:scale-100">
+            /* Enhanced Full Header */
+            <div className="space-y-4">
+              <div className="scale-75 md:scale-100 transition-transform duration-500">
                 <HolographicAvatar 
                   isListening={isListening} 
                   isSpeaking={isSpeaking}
                   mood={currentMood}
                 />
               </div>
-              <h1 className="text-xl md:text-2xl font-bold cosmic-text mt-2 mb-1">Nova AI</h1>
-              <p className="text-gray-400 text-xs md:text-sm mb-1">
-                Powered by Tanveer AI
-              </p>
-              <div className="text-xs text-cosmic-cyan font-mono mb-2">
-                Mode: {currentMood.toUpperCase()} | Status: ONLINE
+              
+              <div className="space-y-2">
+                <h1 className="text-2xl md:text-3xl font-bold cosmic-text transition-all duration-300 hover:scale-105">
+                  Nova AI
+                </h1>
+                <p className="text-gray-400 text-sm md:text-base transition-colors duration-300">
+                  Powered by Tanveer AI
+                </p>
+                <div className="text-xs text-cosmic-cyan font-mono tracking-wider bg-cosmic-cyan/10 px-3 py-1 rounded-full inline-block transition-all duration-300 hover:bg-cosmic-cyan/20">
+                  Mode: {currentMood.toUpperCase()} | Status: ONLINE
+                </div>
               </div>
               
-              <div className="scale-75 md:scale-90">
+              <div className="scale-75 md:scale-90 transition-transform duration-500">
                 <AIPersonalityCore 
                   currentMood={currentMood}
                   isActive={isTyping || isListening}
                   onTraitsChange={handlePersonalityChange}
                 />
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Scrollable Chat Messages - Optimized for Mobile */}
-      <ScrollArea ref={scrollAreaRef} className="flex-1 pr-2 md:pr-4 mb-4">
-        <div className="space-y-3 md:space-y-4 pb-4">
-          {messages.map((message) => (
-            <div key={message.id} className="relative">
+      {/* Enhanced Scrollable Chat Messages */}
+      <ScrollArea ref={scrollAreaRef} className="flex-1 pr-2 md:pr-4 mb-4 relative">
+        {/* Chat container with better visual hierarchy */}
+        <div className="space-y-4 md:space-y-6 pb-6">
+          {messages.map((message, index) => (
+            <div 
+              key={message.id} 
+              className={`relative transition-all duration-500 transform ${
+                index === messages.length - 1 ? 'animate-fade-in' : ''
+              }`}
+            >
               <ChatBubble
                 message={message.text}
                 isUser={message.isUser}
                 timestamp={message.timestamp}
               />
               {!message.isUser && message.confidence && (
-                <div className="ml-4 mt-1 text-xs text-gray-500 font-mono hidden md:block">
-                  Confidence: {Math.round(message.confidence * 100)}% | 
-                  {message.processingTime && ` Processing: ${Math.round(message.processingTime)}ms`}
+                <div className="ml-4 mt-2 text-xs text-gray-500 font-mono hidden md:block transition-opacity duration-300 hover:opacity-100 opacity-70">
+                  <span className="bg-gray-800/50 px-2 py-1 rounded-md">
+                    Confidence: {Math.round(message.confidence * 100)}%
+                    {message.processingTime && ` | Processing: ${Math.round(message.processingTime)}ms`}
+                  </span>
                 </div>
               )}
             </div>
           ))}
           
           {isTyping && (
-            <ChatBubble
-              message=""
-              isUser={false}
-              isTyping={true}
-            />
+            <div className="animate-fade-in">
+              <ChatBubble
+                message=""
+                isUser={false}
+                isTyping={true}
+              />
+            </div>
           )}
         </div>
       </ScrollArea>
 
-      {/* Fixed Input Area - Mobile Optimized */}
-      <div className="flex-shrink-0 flex items-end space-x-2 md:space-x-4 pt-4">
-        <div className="flex-1">
-          <ChatInput 
-            onSendMessage={handleSendMessage}
-            disabled={isTyping}
-            placeholder="Ask Nova anything... ✨"
-          />
+      {/* Enhanced Fixed Input Area */}
+      <div className="flex-shrink-0 relative z-10">
+        <div className="glass-dark rounded-2xl p-4 border border-cosmic-cyan/20 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:border-cosmic-cyan/40">
+          <div className="flex items-end space-x-3 md:space-x-4">
+            <div className="flex-1">
+              <ChatInput 
+                onSendMessage={handleSendMessage}
+                disabled={isTyping}
+                placeholder="Ask Nova anything... ✨"
+              />
+            </div>
+            <VoiceButton 
+              isListening={isListening}
+              onToggle={handleVoiceToggle}
+              disabled={isTyping}
+            />
+          </div>
         </div>
-        <VoiceButton 
-          isListening={isListening}
-          onToggle={handleVoiceToggle}
-          disabled={isTyping}
-        />
       </div>
     </div>
   );
