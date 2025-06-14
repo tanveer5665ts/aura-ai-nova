@@ -5,6 +5,7 @@ import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import VoiceButton from './VoiceButton';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -35,6 +36,7 @@ const AdvancedNovaChat: React.FC = () => {
     curiosity: 0.95,
     confidence: 0.75
   });
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Integrated key
@@ -197,49 +199,81 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
   }, [messages, isTyping]);
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto p-4">
-      {/* AI Status Panel - Fixed */}
-      <div className="absolute top-4 right-4 glass-dark rounded-lg p-3 border border-cosmic-cyan/20 z-10">
-        <div className="text-xs text-cosmic-cyan font-mono mb-2">NOVA SYSTEM STATUS</div>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="text-gray-400">Messages: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
-          <div className="text-gray-400">Avg Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
-          <div className="text-gray-400">Knowledge: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
+    <div className="flex flex-col h-screen max-w-4xl mx-auto p-2 md:p-4">
+      {/* AI Status Panel - Mobile Optimized */}
+      <div className="absolute top-2 right-2 md:top-4 md:right-4 glass-dark rounded-lg p-2 md:p-3 border border-cosmic-cyan/20 z-10">
+        <div className="text-xs text-cosmic-cyan font-mono mb-1 md:mb-2">NOVA STATUS</div>
+        <div className="grid grid-cols-2 gap-1 md:gap-2 text-xs">
+          <div className="text-gray-400">Msgs: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
           <div className="text-gray-400">AI: <span className="text-pink-400">LIVE</span></div>
+          <div className="text-gray-400 md:block hidden">Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
+          <div className="text-gray-400 md:block hidden">KB: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
         </div>
       </div>
 
-      {/* Compact Fixed Header with Advanced Avatar */}
-      <div className="flex-shrink-0 flex items-center justify-center mb-4 relative mt-16">
-        <div className="text-center relative">
-          <div className="scale-75">
-            <HolographicAvatar 
-              isListening={isListening} 
-              isSpeaking={isSpeaking}
-              mood={currentMood}
-            />
-          </div>
-          <h1 className="text-xl font-bold cosmic-text mt-2 mb-1">Nova AI</h1>
-          <p className="text-gray-400 text-xs mb-1">
-            Powered by Tanveer AI
-          </p>
-          <div className="text-xs text-cosmic-cyan font-mono">
-            Mode: {currentMood.toUpperCase()} | Status: ONLINE
-          </div>
-          
-          <div className="scale-90 mt-2">
-            <AIPersonalityCore 
-              currentMood={currentMood}
-              isActive={isTyping || isListening}
-              onTraitsChange={handlePersonalityChange}
-            />
-          </div>
+      {/* Mobile-Responsive Collapsible Header */}
+      <div className="flex-shrink-0 relative mt-12 md:mt-16">
+        {/* Mobile Collapse Toggle */}
+        <button 
+          onClick={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
+          className="md:hidden absolute top-0 right-0 z-20 p-2 text-cosmic-cyan"
+        >
+          {isHeaderCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+        </button>
+
+        <div className={`text-center transition-all duration-300 ${
+          isHeaderCollapsed ? 'mb-2' : 'mb-4'
+        }`}>
+          {/* Collapsed Mobile Header */}
+          {isHeaderCollapsed ? (
+            <div className="flex items-center justify-center space-x-3">
+              <div className="scale-50">
+                <HolographicAvatar 
+                  isListening={isListening} 
+                  isSpeaking={isSpeaking}
+                  mood={currentMood}
+                />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold cosmic-text">Nova AI</h1>
+                <div className="text-xs text-cosmic-cyan font-mono">
+                  {currentMood.toUpperCase()}
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Full Header */
+            <>
+              <div className="scale-75 md:scale-100">
+                <HolographicAvatar 
+                  isListening={isListening} 
+                  isSpeaking={isSpeaking}
+                  mood={currentMood}
+                />
+              </div>
+              <h1 className="text-xl md:text-2xl font-bold cosmic-text mt-2 mb-1">Nova AI</h1>
+              <p className="text-gray-400 text-xs md:text-sm mb-1">
+                Powered by Tanveer AI
+              </p>
+              <div className="text-xs text-cosmic-cyan font-mono mb-2">
+                Mode: {currentMood.toUpperCase()} | Status: ONLINE
+              </div>
+              
+              <div className="scale-75 md:scale-90">
+                <AIPersonalityCore 
+                  currentMood={currentMood}
+                  isActive={isTyping || isListening}
+                  onTraitsChange={handlePersonalityChange}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Scrollable Chat Messages - More Space */}
-      <ScrollArea ref={scrollAreaRef} className="flex-1 pr-4 mb-4">
-        <div className="space-y-4 pb-4">
+      {/* Scrollable Chat Messages - Optimized for Mobile */}
+      <ScrollArea ref={scrollAreaRef} className="flex-1 pr-2 md:pr-4 mb-4">
+        <div className="space-y-3 md:space-y-4 pb-4">
           {messages.map((message) => (
             <div key={message.id} className="relative">
               <ChatBubble
@@ -248,7 +282,7 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
                 timestamp={message.timestamp}
               />
               {!message.isUser && message.confidence && (
-                <div className="ml-4 mt-1 text-xs text-gray-500 font-mono">
+                <div className="ml-4 mt-1 text-xs text-gray-500 font-mono hidden md:block">
                   Confidence: {Math.round(message.confidence * 100)}% | 
                   {message.processingTime && ` Processing: ${Math.round(message.processingTime)}ms`}
                 </div>
@@ -266,13 +300,13 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         </div>
       </ScrollArea>
 
-      {/* Fixed Input Area */}
-      <div className="flex-shrink-0 flex items-end space-x-4 pt-4">
+      {/* Fixed Input Area - Mobile Optimized */}
+      <div className="flex-shrink-0 flex items-end space-x-2 md:space-x-4 pt-4">
         <div className="flex-1">
           <ChatInput 
             onSendMessage={handleSendMessage}
             disabled={isTyping}
-            placeholder="Ask Nova anything... I have access to Tanveer's AI! ✨"
+            placeholder="Ask Nova anything... ✨"
           />
         </div>
         <VoiceButton 
