@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
@@ -19,6 +20,7 @@ interface Message {
   mood?: string;
   confidence?: number;
   processingTime?: number;
+  translated?: string; // <-- Added this optional property
 }
 
 const LANGUAGE_OPTIONS = [
