@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
@@ -210,31 +209,35 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         </div>
       </div>
 
-      {/* Fixed Header with Advanced Avatar */}
-      <div className="flex-shrink-0 flex items-center justify-center mb-6 relative mt-20">
+      {/* Compact Fixed Header with Advanced Avatar */}
+      <div className="flex-shrink-0 flex items-center justify-center mb-4 relative mt-16">
         <div className="text-center relative">
-          <HolographicAvatar 
-            isListening={isListening} 
-            isSpeaking={isSpeaking}
-            mood={currentMood}
-          />
-          <h1 className="text-3xl font-bold cosmic-text mt-6 mb-2">Nova AI</h1>
-          <p className="text-gray-400 text-sm mb-2">
+          <div className="scale-75">
+            <HolographicAvatar 
+              isListening={isListening} 
+              isSpeaking={isSpeaking}
+              mood={currentMood}
+            />
+          </div>
+          <h1 className="text-xl font-bold cosmic-text mt-2 mb-1">Nova AI</h1>
+          <p className="text-gray-400 text-xs mb-1">
             Powered by Tanveer AI
           </p>
           <div className="text-xs text-cosmic-cyan font-mono">
             Mode: {currentMood.toUpperCase()} | Status: ONLINE
           </div>
           
-          <AIPersonalityCore 
-            currentMood={currentMood}
-            isActive={isTyping || isListening}
-            onTraitsChange={handlePersonalityChange}
-          />
+          <div className="scale-90 mt-2">
+            <AIPersonalityCore 
+              currentMood={currentMood}
+              isActive={isTyping || isListening}
+              onTraitsChange={handlePersonalityChange}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Scrollable Chat Messages */}
+      {/* Scrollable Chat Messages - More Space */}
       <ScrollArea ref={scrollAreaRef} className="flex-1 pr-4 mb-4">
         <div className="space-y-4 pb-4">
           {messages.map((message) => (
