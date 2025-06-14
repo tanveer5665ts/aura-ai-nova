@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
@@ -218,35 +217,8 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
     }
   }, [messages, isTyping]);
 
-  // Enhanced: Translation controls at top right
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 relative overflow-hidden">
-
-      {/* --- Translation Controls --- */}
-      <div className="absolute top-4 left-4 z-20">
-        <div className="glass-dark flex items-center rounded-xl p-2 border border-cosmic-cyan/20 shadow-2xl backdrop-blur-xl space-x-2 animate-fade-in">
-          <Globe className="w-5 h-5 text-cosmic-cyan" />
-          <span className="text-xs font-mono text-cosmic-cyan">Translate</span>
-          <input
-            type="checkbox"
-            checked={translationEnabled}
-            onChange={e => setTranslationEnabled(e.target.checked)}
-            className="accent-cosmic-cyan mx-1"
-            id="toggle-translation"
-          />
-          <select
-            className="glass border rounded px-1 py-0.5 text-xs text-cosmic-cyan bg-slate-950/60"
-            value={targetLang}
-            onChange={e => setTargetLang(e.target.value)}
-            disabled={!translationEnabled}
-            style={{ minWidth: 60 }}
-          >
-            {LANGUAGE_OPTIONS.map(l =>
-              <option value={l.code} key={l.code}>{l.label}</option>
-            )}
-          </select>
-        </div>
-      </div>
 
       {/* --- ENHANCED ANIMATED BACKGROUNDS --- */}
       <GlossyParticleOverlay />
