@@ -5,6 +5,7 @@ import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import VoiceButton from './VoiceButton';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -22,7 +23,6 @@ const AdvancedNovaChat: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [currentMood, setCurrentMood] = useState<'neutral' | 'happy' | 'thinking' | 'excited' | 'focused'>('neutral');
-  const [isScrolled, setIsScrolled] = useState(false);
   const [aiStats, setAiStats] = useState({
     messagesProcessed: 0,
     averageResponseTime: 1200,
@@ -36,31 +36,11 @@ const AdvancedNovaChat: React.FC = () => {
     curiosity: 0.95,
     confidence: 0.75
   });
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Integrated key
   const apiKey = 'AIzaSyDe6CpKNun9p3Nti2sAwIEQb94WTyhTxZg';
-
-  // Scroll detection
-  useEffect(() => {
-    const handleScroll = () => {
-      if (scrollAreaRef.current) {
-        const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-        if (scrollContainer) {
-          const scrollTop = scrollContainer.scrollTop;
-          setIsScrolled(scrollTop > 100);
-        }
-      }
-    };
-
-    if (scrollAreaRef.current) {
-      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-      if (scrollContainer) {
-        scrollContainer.addEventListener('scroll', handleScroll);
-        return () => scrollContainer.removeEventListener('scroll', handleScroll);
-      }
-    }
-  }, []);
 
   // Call Tanveer AI API
   const callTanveerAI = async (userMessage: string): Promise<string> => {
@@ -219,104 +199,121 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
   }, [messages, isTyping]);
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto p-2 md:p-4 relative">
-      {/* Nova AI Logo - Fixed at top center */}
-      <div className="fixed top-2 left-1/2 transform -translate-x-1/2 z-30">
-        <div className="text-center">
-          <h1 className="text-lg md:text-xl font-bold cosmic-text mb-1">Nova AI</h1>
-          <p className="text-gray-400 text-xs">
-            Powered by Tanveer AI
-          </p>
-          <div className="text-xs text-cosmic-cyan font-mono">
-            Mode: {currentMood.toUpperCase()} | Status: ONLINE
-          </div>
+    <div className="flex flex-col h-screen max-w-4xl mx-auto p-2 md:p-4">
+      {/* AI Status Panel - Mobile Optimized */}
+      <div className="absolute top-2 right-2 md:top-4 md:right-4 glass-dark rounded-lg p-2 md:p-3 border border-cosmic-cyan/20 z-10">
+        <div className="text-xs text-cosmic-cyan font-mono mb-1 md:mb-2">NOVA STATUS</div>
+        <div className="grid grid-cols-2 gap-1 md:gap-2 text-xs">
+          <div className="text-gray-400">Msgs: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
+          <div className="text-gray-400">AI: <span className="text-pink-400">LIVE</span></div>
+          <div className="text-gray-400 md:block hidden">Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
+          <div className="text-gray-400 md:block hidden">KB: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
         </div>
       </div>
 
-      {/* AI Personality Core - Fixed at top left */}
-      <div className="fixed top-2 left-2 z-30">
-        <div className="glass-dark rounded-lg p-2 border border-cosmic-cyan/20">
-          <div className="text-xs text-cosmic-cyan mb-1 font-mono">PERSONALITY CORE</div>
-          <AIPersonalityCore 
-            currentMood={currentMood}
-            isActive={isTyping || isListening}
-            onTraitsChange={handlePersonalityChange}
-          />
-        </div>
-      </div>
+      {/* Mobile-Responsive Collapsible Header */}
+      <div className="flex-shrink-0 relative mt-12 md:mt-16">
+        {/* Mobile Collapse Toggle */}
+        <button 
+          onClick={() => setIsHeaderCollapsed(!isHeaderCollapsed)}
+          className="md:hidden absolute top-0 right-0 z-20 p-2 text-cosmic-cyan"
+        >
+          {isHeaderCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+        </button>
 
-      {/* AI Status Panel - Fixed at top right */}
-      <div className="fixed top-2 right-2 z-30">
-        <div className="glass-dark rounded-lg p-2 border border-cosmic-cyan/20">
-          <div className="text-xs text-cosmic-cyan font-mono mb-1">NOVA STATUS</div>
-          <div className="grid grid-cols-2 gap-1 text-xs">
-            <div className="text-gray-400">Msgs: <span className="text-green-400">{aiStats.messagesProcessed}</span></div>
-            <div className="text-gray-400">AI: <span className="text-pink-400">LIVE</span></div>
-            <div className="text-gray-400">Time: <span className="text-blue-400">{Math.round(aiStats.averageResponseTime)}ms</span></div>
-            <div className="text-gray-400">KB: <span className="text-purple-400">{aiStats.knowledgeAccessed}</span></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Holographic Avatar - Center when not scrolled */}
-      <div className={`fixed transition-all duration-700 ease-in-out z-20 ${
-        isScrolled 
-          ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-75' 
-          : 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 scale-100'
-      }`}>
-        <HolographicAvatar 
-          isListening={isListening} 
-          isSpeaking={isSpeaking}
-          mood={currentMood}
-        />
-      </div>
-
-      {/* Chat Content - Adjust top margin */}
-      <div className="flex flex-col h-full mt-20">
-        {/* Scrollable Chat Messages */}
-        <ScrollArea ref={scrollAreaRef} className="flex-1 pr-2 md:pr-4 mb-4">
-          <div className="space-y-3 md:space-y-4 pb-4">
-            {messages.map((message) => (
-              <div key={message.id} className="relative">
-                <ChatBubble
-                  message={message.text}
-                  isUser={message.isUser}
-                  timestamp={message.timestamp}
+        <div className={`text-center transition-all duration-300 ${
+          isHeaderCollapsed ? 'mb-2' : 'mb-4'
+        }`}>
+          {/* Collapsed Mobile Header */}
+          {isHeaderCollapsed ? (
+            <div className="flex items-center justify-center space-x-3">
+              <div className="scale-50">
+                <HolographicAvatar 
+                  isListening={isListening} 
+                  isSpeaking={isSpeaking}
+                  mood={currentMood}
                 />
-                {!message.isUser && message.confidence && (
-                  <div className="ml-4 mt-1 text-xs text-gray-500 font-mono hidden md:block">
-                    Confidence: {Math.round(message.confidence * 100)}% | 
-                    {message.processingTime && ` Processing: ${Math.round(message.processingTime)}ms`}
-                  </div>
-                )}
               </div>
-            ))}
-            
-            {isTyping && (
-              <ChatBubble
-                message=""
-                isUser={false}
-                isTyping={true}
-              />
-            )}
-          </div>
-        </ScrollArea>
+              <div>
+                <h1 className="text-lg font-bold cosmic-text">Nova AI</h1>
+                <div className="text-xs text-cosmic-cyan font-mono">
+                  {currentMood.toUpperCase()}
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Full Header */
+            <>
+              <div className="scale-75 md:scale-100">
+                <HolographicAvatar 
+                  isListening={isListening} 
+                  isSpeaking={isSpeaking}
+                  mood={currentMood}
+                />
+              </div>
+              <h1 className="text-xl md:text-2xl font-bold cosmic-text mt-2 mb-1">Nova AI</h1>
+              <p className="text-gray-400 text-xs md:text-sm mb-1">
+                Powered by Tanveer AI
+              </p>
+              <div className="text-xs text-cosmic-cyan font-mono mb-2">
+                Mode: {currentMood.toUpperCase()} | Status: ONLINE
+              </div>
+              
+              <div className="scale-75 md:scale-90">
+                <AIPersonalityCore 
+                  currentMood={currentMood}
+                  isActive={isTyping || isListening}
+                  onTraitsChange={handlePersonalityChange}
+                />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
-        {/* Fixed Input Area */}
-        <div className="flex-shrink-0 flex items-end space-x-2 md:space-x-4 pt-4">
-          <div className="flex-1">
-            <ChatInput 
-              onSendMessage={handleSendMessage}
-              disabled={isTyping}
-              placeholder="Ask Nova anything... ✨"
+      {/* Scrollable Chat Messages - Optimized for Mobile */}
+      <ScrollArea ref={scrollAreaRef} className="flex-1 pr-2 md:pr-4 mb-4">
+        <div className="space-y-3 md:space-y-4 pb-4">
+          {messages.map((message) => (
+            <div key={message.id} className="relative">
+              <ChatBubble
+                message={message.text}
+                isUser={message.isUser}
+                timestamp={message.timestamp}
+              />
+              {!message.isUser && message.confidence && (
+                <div className="ml-4 mt-1 text-xs text-gray-500 font-mono hidden md:block">
+                  Confidence: {Math.round(message.confidence * 100)}% | 
+                  {message.processingTime && ` Processing: ${Math.round(message.processingTime)}ms`}
+                </div>
+              )}
+            </div>
+          ))}
+          
+          {isTyping && (
+            <ChatBubble
+              message=""
+              isUser={false}
+              isTyping={true}
             />
-          </div>
-          <VoiceButton 
-            isListening={isListening}
-            onToggle={handleVoiceToggle}
+          )}
+        </div>
+      </ScrollArea>
+
+      {/* Fixed Input Area - Mobile Optimized */}
+      <div className="flex-shrink-0 flex items-end space-x-2 md:space-x-4 pt-4">
+        <div className="flex-1">
+          <ChatInput 
+            onSendMessage={handleSendMessage}
             disabled={isTyping}
+            placeholder="Ask Nova anything... ✨"
           />
         </div>
+        <VoiceButton 
+          isListening={isListening}
+          onToggle={handleVoiceToggle}
+          disabled={isTyping}
+        />
       </div>
     </div>
   );
