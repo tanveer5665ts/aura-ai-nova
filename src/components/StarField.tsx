@@ -7,7 +7,6 @@ interface Star {
   size: number;
   speed: number;
   opacity: number;
-  twinkleOffset: number;
 }
 
 const StarField: React.FC = () => {
@@ -29,16 +28,15 @@ const StarField: React.FC = () => {
 
     const createStars = () => {
       const stars: Star[] = [];
-      const numStars = 200;
+      const numStars = 150;
 
       for (let i = 0; i < numStars; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 1.5 + 0.3,
-          speed: Math.random() * 0.2 + 0.05,
-          opacity: Math.random() * 0.8 + 0.2,
-          twinkleOffset: Math.random() * Math.PI * 2
+          size: Math.random() * 2 + 0.5,
+          speed: Math.random() * 0.5 + 0.1,
+          opacity: Math.random() * 0.8 + 0.2
         });
       }
 
@@ -50,56 +48,40 @@ const StarField: React.FC = () => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Smooth nebula gradient background with gentle color shifts
-      const time = Date.now() * 0.0001;
+      // Draw nebula gradient background
       const gradient = ctx.createRadialGradient(
-        canvas.width / 2 + Math.sin(time) * 100, 
-        canvas.height / 2 + Math.cos(time * 0.7) * 80, 0,
+        canvas.width / 2, canvas.height / 2, 0,
         canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height)
       );
-      
-      gradient.addColorStop(0, `rgba(139, 92, 246, ${0.08 + Math.sin(time * 2) * 0.03})`);
-      gradient.addColorStop(0.3, `rgba(0, 212, 255, ${0.04 + Math.sin(time * 1.5) * 0.02})`);
-      gradient.addColorStop(0.7, `rgba(236, 72, 153, ${0.02 + Math.sin(time * 1.8) * 0.01})`);
+      gradient.addColorStop(0, 'rgba(139, 92, 246, 0.1)');
+      gradient.addColorStop(0.5, 'rgba(0, 212, 255, 0.05)');
       gradient.addColorStop(1, 'rgba(11, 20, 38, 1)');
 
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Animate and draw stars with smooth movements
-      starsRef.current.forEach((star, index) => {
-        // Gentle vertical movement
+      // Animate and draw stars
+      starsRef.current.forEach(star => {
+        // Update position
         star.y -= star.speed;
-        
-        // Subtle horizontal drift
-        star.x += Math.sin(time + star.twinkleOffset) * 0.1;
-        
-        if (star.y < -10) {
-          star.y = canvas.height + 10;
+        if (star.y < 0) {
+          star.y = canvas.height;
           star.x = Math.random() * canvas.width;
         }
 
-        // Smooth boundaries
-        if (star.x < 0) star.x = canvas.width;
-        if (star.x > canvas.width) star.x = 0;
+        // Twinkle effect
+        star.opacity = Math.sin(Date.now() * 0.001 + star.x) * 0.5 + 0.5;
 
-        // Smooth twinkle effect
-        const twinkle = Math.sin(time * 3 + star.twinkleOffset) * 0.3 + 0.7;
-        const finalOpacity = star.opacity * twinkle;
-
-        // Draw star with smooth glow
+        // Draw star
         ctx.save();
-        ctx.globalAlpha = finalOpacity;
-        
-        const glowIntensity = star.size * (1 + twinkle * 0.5);
-        ctx.shadowColor = '#00D4FF';
-        ctx.shadowBlur = glowIntensity * 3;
-        
+        ctx.globalAlpha = star.opacity;
         ctx.fillStyle = '#00D4FF';
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, star.size * twinkle, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.shadowColor = '#00D4FF';
+        ctx.shadowBlur = star.size * 2;
         
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+        ctx.fill();
         ctx.restore();
       });
 
