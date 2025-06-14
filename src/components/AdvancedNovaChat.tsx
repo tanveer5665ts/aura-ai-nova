@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
@@ -197,8 +198,8 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
   }, [messages, isTyping]);
 
   return (
-    <div className="flex flex-col h-screen max-w-4xl mx-auto p-4 relative">
-      {/* AI Status Panel */}
+    <div className="flex flex-col h-screen max-w-4xl mx-auto p-4">
+      {/* AI Status Panel - Fixed */}
       <div className="absolute top-4 right-4 glass-dark rounded-lg p-3 border border-cosmic-cyan/20 z-10">
         <div className="text-xs text-cosmic-cyan font-mono mb-2">NOVA SYSTEM STATUS</div>
         <div className="grid grid-cols-2 gap-2 text-xs">
@@ -209,8 +210,8 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         </div>
       </div>
 
-      {/* Header with Advanced Avatar */}
-      <div className="flex items-center justify-center mb-6 relative mt-20">
+      {/* Fixed Header with Advanced Avatar */}
+      <div className="flex-shrink-0 flex items-center justify-center mb-6 relative mt-20">
         <div className="text-center relative">
           <HolographicAvatar 
             isListening={isListening} 
@@ -233,8 +234,8 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         </div>
       </div>
 
-      {/* Chat Messages */}
-      <ScrollArea ref={scrollAreaRef} className="flex-1 pr-4">
+      {/* Scrollable Chat Messages */}
+      <ScrollArea ref={scrollAreaRef} className="flex-1 pr-4 mb-4">
         <div className="space-y-4 pb-4">
           {messages.map((message) => (
             <div key={message.id} className="relative">
@@ -262,8 +263,8 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         </div>
       </ScrollArea>
 
-      {/* Enhanced Input Area */}
-      <div className="flex items-end space-x-4 pt-4">
+      {/* Fixed Input Area */}
+      <div className="flex-shrink-0 flex items-end space-x-4 pt-4">
         <div className="flex-1">
           <ChatInput 
             onSendMessage={handleSendMessage}
