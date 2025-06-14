@@ -99,4 +99,141 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Advanced Holographic Effects */
+  .holographic-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .holographic-shimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+  }
+
+  /* Neural Network Pulse */
+  .neural-pulse {
+    animation: neural-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes neural-pulse {
+    0%, 100% { 
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% { 
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  /* Quantum Field Effect */
+  .quantum-field {
+    animation: quantum-field 4s ease-in-out infinite;
+  }
+
+  @keyframes quantum-field {
+    0%, 100% { 
+      filter: hue-rotate(0deg) brightness(1);
+    }
+    25% { 
+      filter: hue-rotate(90deg) brightness(1.2);
+    }
+    50% { 
+      filter: hue-rotate(180deg) brightness(0.8);
+    }
+    75% { 
+      filter: hue-rotate(270deg) brightness(1.1);
+    }
+  }
+
+  /* Data Stream Effect */
+  .data-stream {
+    animation: data-stream 3s linear infinite;
+  }
+
+  @keyframes data-stream {
+    0% { 
+      transform: translateY(100vh) rotate(0deg);
+      opacity: 0;
+    }
+    10% { 
+      opacity: 1;
+    }
+    90% { 
+      opacity: 1;
+    }
+    100% { 
+      transform: translateY(-100px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Holographic Text */
+  .holographic-text {
+    background: linear-gradient(
+      45deg,
+      #00d4ff,
+      #8b5cf6,
+      #ec4899,
+      #00d4ff
+    );
+    background-size: 300% 300%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: holographic-text 3s ease-in-out infinite;
+    text-shadow: 
+      0 0 10px rgba(0, 212, 255, 0.5),
+      0 0 20px rgba(139, 92, 246, 0.3),
+      0 0 30px rgba(236, 72, 153, 0.2);
+  }
+
+  @keyframes holographic-text {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  /* Scanning Line Effect */
+  .scanning-line {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scanning-line::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      #00d4ff,
+      transparent
+    );
+    animation: scanning-line 2s linear infinite;
+  }
+
+  @keyframes scanning-line {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(100px); }
+  }
 }

@@ -1,17 +1,17 @@
 
 import React from 'react';
 import StarField from '@/components/StarField';
-import ParticleEffect from '@/components/ParticleEffect';
-import NovaChat from '@/components/NovaChat';
+import AdvancedParticleSystem from '@/components/AdvancedParticleSystem';
+import AdvancedNovaChat from '@/components/AdvancedNovaChat';
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-cosmic-dark relative overflow-hidden">
       <StarField />
-      <ParticleEffect />
+      <AdvancedParticleSystem />
       
       <div className="relative z-10">
-        <NovaChat />
+        <AdvancedNovaChat />
       </div>
     </div>
   );
