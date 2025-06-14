@@ -303,10 +303,10 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
       )}
 
       {/* Enhanced Fixed Input Area */}
-      <div className="flex-shrink-0 relative z-10 p-4 md:p-6">
+      <div className="flex-shrink-0 relative z-10 p-2 md:p-3">
         <div className="max-w-4xl mx-auto">
-          <div className="glass-dark rounded-3xl p-4 border border-blue-500/20 shadow-2xl backdrop-blur-xl">
-            <div className="flex items-end space-x-4">
+          <div className="glass-dark rounded-2xl p-2 border border-blue-500/20 shadow-2xl backdrop-blur-xl">
+            <div className="flex items-end space-x-2">
               <div className="flex-1">
                 <ChatInput 
                   onSendMessage={handleSendMessage}
