@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import HolographicAvatar from './HolographicAvatar';
 import AIPersonalityCore from './AIPersonalityCore';
@@ -5,7 +6,7 @@ import ChatBubble from './ChatBubble';
 import ChatInput from './ChatInput';
 import VoiceButton from './VoiceButton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChevronDown, ChevronUp, Sparkles, Settings } from 'lucide-react';
+import { ChevronDown, ChevronUp, Sparkles } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -38,8 +39,6 @@ const AdvancedNovaChat: React.FC = () => {
   });
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showPersonalityControls, setShowPersonalityControls] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   // Integrated key
@@ -199,58 +198,8 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
         <div className="absolute top-1/2 left-1/2 w-60 h-60 bg-cyan-500/5 rounded-full blur-3xl animate-float-gentle" style={{ animationDelay: '4s' }} />
       </div>
 
-      {/* Personality Controls Button - Left Side */}
-      <div className="absolute top-4 left-4 z-20">
-        <button
-          onClick={() => setShowPersonalityControls(!showPersonalityControls)}
-          className="glass-dark rounded-xl p-3 border border-purple-500/20 shadow-2xl backdrop-blur-xl hover:border-purple-500/40 transition-all duration-300 hover:scale-105"
-        >
-          <div className="flex items-center space-x-2">
-            <Sparkles className="w-5 h-5 text-purple-400" />
-            <span className="text-xs text-purple-400 font-mono tracking-wider">PERSONALITY</span>
-          </div>
-        </button>
-      </div>
-
-      {/* Personality Controls Panel */}
-      {showPersonalityControls && (
-        <div className="absolute top-20 left-4 z-20 w-80 animate-fade-in">
-          <div className="glass-dark rounded-xl p-6 border border-purple-500/20 shadow-2xl backdrop-blur-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">AI Personality</h3>
-              <button
-                onClick={() => setShowPersonalityControls(false)}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-purple-400 mb-3">Core Traits</h4>
-                <AIPersonalityCore 
-                  currentMood={currentMood}
-                  isActive={isTyping || isListening}
-                  onTraitsChange={handlePersonalityChange}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Enhanced Status Panel with Settings Button - Right Side */}
-      <div className="absolute top-4 right-4 z-20 flex items-center space-x-3">
-        {/* Settings Button */}
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="glass-dark rounded-xl p-3 border border-blue-500/20 shadow-2xl backdrop-blur-xl hover:border-blue-500/40 transition-all duration-300 hover:scale-105"
-        >
-          <Settings className="w-5 h-5 text-blue-400" />
-        </button>
-
-        {/* Existing Status Panel */}
+      {/* Enhanced Status Panel */}
+      <div className="absolute top-4 right-4 z-20">
         <div className="glass-dark rounded-xl p-3 border border-blue-500/20 shadow-2xl backdrop-blur-xl">
           <div className="flex items-center space-x-2 mb-2">
             <Sparkles className="w-4 h-4 text-blue-400 animate-pulse" />
@@ -266,47 +215,6 @@ Respond in a way that reflects these personality traits. Be helpful, intelligent
           </div>
         </div>
       </div>
-
-      {/* Settings Panel */}
-      {showSettings && (
-        <div className="absolute top-20 right-4 z-20 w-80 animate-fade-in">
-          <div className="glass-dark rounded-xl p-6 border border-blue-500/20 shadow-2xl backdrop-blur-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Core Settings</h3>
-              <button
-                onClick={() => setShowSettings(false)}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="border-t border-gray-600 pt-4">
-                <h4 className="text-sm font-medium text-purple-400 mb-3">System Stats</h4>
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="bg-slate-800/50 rounded-lg p-3">
-                    <div className="text-gray-400">Messages</div>
-                    <div className="text-white font-semibold">{aiStats.messagesProcessed}</div>
-                  </div>
-                  <div className="bg-slate-800/50 rounded-lg p-3">
-                    <div className="text-gray-400">Avg Response</div>
-                    <div className="text-white font-semibold">{Math.round(aiStats.averageResponseTime)}ms</div>
-                  </div>
-                  <div className="bg-slate-800/50 rounded-lg p-3">
-                    <div className="text-gray-400">Knowledge</div>
-                    <div className="text-white font-semibold">{aiStats.knowledgeAccessed}</div>
-                  </div>
-                  <div className="bg-slate-800/50 rounded-lg p-3">
-                    <div className="text-gray-400">Creativity</div>
-                    <div className="text-white font-semibold">{aiStats.creativityLevel}%</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Welcome Screen */}
       {showWelcome && (
